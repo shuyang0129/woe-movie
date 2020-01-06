@@ -36,6 +36,7 @@
         "no-object-literal-type-assertion": false,
         "no-var-requires": false,
         "no-this-assignment": false,
-        "indent": [true, "space", 4]
+        "indent": [true, "space", 4],
+        "linebreak-style": [true, "lf"]
     }
 }
