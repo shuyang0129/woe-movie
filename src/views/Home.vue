@@ -1,17 +1,12 @@
 <template>
-    <div class="home">
-        <MovieCard />
-    </div>
+    <div class="home">Home</div>
 </template>
 
-<script>
-// @ is an alias to /src
-import MovieCard from '@/components/MovieCard.vue';
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
 
-export default {
-    name: 'home',
-    components: {
-        MovieCard,
-    },
-};
+@Component({
+    components: {},
+})
+export default class Home extends Vue {}
 </script>
