@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div id="app" class="antialiased text-gray-600">
         <router-view></router-view>
     </div>
 </template>
@@ -12,3 +12,12 @@ import { Component, Vue } from 'vue-property-decorator';
 })
 export default class App extends Vue {}
 </script>
+<style>
+html,
+body,
+#app {
+    @apply bg-gray-300;
+    width: 100%;
+    height: 100%;
+}
+</style>
