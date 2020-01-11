@@ -16,7 +16,7 @@ export default class App extends Vue {}
 html,
 body,
 #app {
-    @apply bg-gray-300;
+    @apply bg-gray-200;
     width: 100%;
     height: 100%;
 }

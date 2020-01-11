@@ -30,4 +30,20 @@
     @apply mt-6 mb-2 inline-block text-gray-300 font-semibold text-sm;
 }
 
+.btn-indigo-3d {
+    @apply bg-indigo-500 text-gray-100 border-b-4 border-indigo-700;
+}
+
+.btn-indigo-3d:hover {
+    @apply bg-indigo-600 border-indigo-800;
+}
+
+.btn-gray-3d {
+    @apply bg-gray-500 text-gray-100 border-b-4 border-gray-600;
+}
+
+.btn-gray-3d:hover {
+    @apply bg-gray-600 border-gray-700;
+}
+
 @tailwind utilities;
