@@ -1,12 +1,12 @@
 <template>
     <transition name="fadeIn">
         <div
-            v-if="isSidebarExpand"
+            v-if="isSidebarOpen"
             class="fixed inset-0 z-50 bg-gray-800 p-6 pb-8 overflow-y-scroll lg:relative lg:rounded-sm lg:shadow-md lg:z-30 lg:opacity-100"
         >
             <div class="mx-auto max-w-lg flex flex-col">
                 <!-- Close -->
-                <button @click="toggleSidebar" class="ml-auto lg:hidden">
+                <button @click="closeSidebar" class="ml-auto lg:hidden">
                     <svg
                         class="fill-current text-gray-400 hover:text-gray-200 w-5 h-5"
                         viewBox="0 0 20 20"
@@ -91,18 +91,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Inject } from 'vue-property-decorator';
 
 @Component({
     components: {},
 })
 export default class Sideabr extends Vue {
-    @Prop() readonly isSidebarExpand!: boolean;
-
-    toggleSidebar(): void {
-        this.$emit('toggleSidebar');
-        return;
-    }
+    @Prop() readonly isSidebarOpen!: boolean;
+    @Inject() private closeSidebar!: void;
 }
 </script>
 <style scoped>

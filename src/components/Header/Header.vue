@@ -5,15 +5,11 @@
         >
             <div class="h-16 pr-2 pl-6 flex items-center justify-between">
                 <img class="h-4" src="./img/logo.png" alt="logo" />
-                <HamburgerMenu
-                    :isMenuOpen="isMenuOpen"
-                    @toggleMenu="toggleMenu"
-                    class="sm:hidden"
-                />
+                <HamburgerMenu class="sm:hidden" :isMenuOpen="isMenuOpen" />
             </div>
             <nav
-                class="px-4 py-4 flex flex-col sm:items-center sm:justify-end sm:max-h-full sm:py-4 overflow-hidden transition-all"
-                v-if="isMenuOpen"
+                class="px-4 py-4 sm:flex sm:items-center sm:justify-end sm:max-h-full sm:py-4 overflow-hidden transition-all"
+                :class="isMenuOpen ? 'block' : 'hidden'"
             >
                 <a
                     href="#"
@@ -36,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue, Watch, Provide } from 'vue-property-decorator';
 import HamburgerMenu from '../HamburgerMenu/HamburgerMenu.vue';
 
 @Component({
@@ -46,8 +42,7 @@ import HamburgerMenu from '../HamburgerMenu/HamburgerMenu.vue';
 })
 export default class Header extends Vue {
     isMenuOpen: boolean = false;
-
-    toggleMenu() {
+    @Provide() toggleMenu(): void {
         this.isMenuOpen = !this.isMenuOpen;
     }
 }

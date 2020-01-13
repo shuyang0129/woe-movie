@@ -3,7 +3,7 @@
         <Header />
         <div class="relative mt-20 max-w-6xl mx-auto">
             <div class="w-full lg:flex lg:items-start pt-6">
-                <div class="w-full lg:w-4/6 md:px-12 lg:px-6">
+                <div class="w-full h-screen lg:w-4/6 md:px-12 lg:px-6">
                     <div
                         class="flex items-baseline justify-between px-6 lg:px-0"
                     >
@@ -11,7 +11,7 @@
                             Total Results: 262
                         </p>
                         <button
-                            @click="toggleSidebar"
+                            @click="openSidebar"
                             class="p-3 bg-gray-300 hover:bg-gray-400 rounded-full lg:hidden transition-bg focus:outline-none focus:shadow-outline"
                         >
                             <svg
@@ -24,13 +24,12 @@
                             </svg>
                         </button>
                     </div>
-                    <MovieCard />
+                    <div v-for="i in 10" :key="i">
+                        <MovieCard />
+                    </div>
                 </div>
                 <div class="lg:block lg:w-2/6 lg:px-6">
-                    <Sidebar
-                        :isSidebarExpand="isSidebarExpand"
-                        @toggleSidebar="toggleSidebar"
-                    />
+                    <Sidebar :isSidebarOpen="isSidebarOpen" />
                 </div>
             </div>
         </div>
@@ -38,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Provide } from 'vue-property-decorator';
 import MovieCard from '@/components/MovieCard.vue';
 import Header from '@/components/Header/Header.vue';
 import Sidebar from '@/components/Sidebar/Sidebar.vue';
@@ -51,19 +50,20 @@ import Sidebar from '@/components/Sidebar/Sidebar.vue';
     },
 })
 export default class Home extends Vue {
-    isSidebarExpand: boolean = false;
-
-    toggleSidebar(): void {
-        this.isSidebarExpand = !this.isSidebarExpand;
+    isSidebarOpen: boolean = false;
+    @Provide() openSidebar() {
+        this.isSidebarOpen = true;
+    }
+    @Provide() closeSidebar() {
+        this.isSidebarOpen = false;
     }
 
     onResize() {
-        if (window.innerWidth >= 1024) {
-            return (this.isSidebarExpand = true);
-        }
+        window.innerWidth >= 1024 ? this.openSidebar() : this.closeSidebar();
     }
 
     created() {
+        this.onResize();
         window.addEventListener('resize', this.onResize);
     }
 
