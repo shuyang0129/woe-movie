@@ -1,5 +1,8 @@
 <template>
-    <div class="flex items-start py-6 pr-6 ml-6 border-b border-gray-400 lg:pr-0 lg:ml-0">
+    <div
+        class="flex items-start py-6 pr-6 ml-6 border-b border-gray-400 lg:pr-0 lg:ml-0"
+    >
+        <!-- Poster -->
         <img
             class="h-32 shadow-md rounded-sm sm:h-48 md:h-56"
             :src="movie.poster_path"
@@ -7,19 +10,25 @@
         />
         <div class="pl-6">
             <div class="flex items-center">
-                <h4 class="font-semibold text-lg text-gray-700">{{ movie.title }}</h4>
+                <h4 class="font-semibold text-lg text-gray-700">
+                    {{ movie.title }}
+                </h4>
                 <span
                     class="ml-2 text-xs font-semibold text-gray-500 uppercase tracking-wide"
-                >{{ movie.original_language }}</span>
+                    >{{ movie.original_language }}</span
+                >
             </div>
             <div class="flex items-center sm:mt-1">
-                <StarIcon :scoreOfStars="scoreOfStarts" :color="'text-yellow-600'" />
+                <StarIcon
+                    :scoreOfStars="scoreOfStarts"
+                    :color="'text-yellow-600'"
+                />
                 <span class="text-xs font-semibold ml-2">
                     {{ scoreOfStarts }}
                     ({{ movie.vote_count }})
-                    <span
-                        class="text-xs font-semibold hidden sm:inline-block"
-                    >&bull; {{ movie.release_date }}</span>
+                    <span class="text-xs font-semibold hidden sm:inline-block"
+                        >&bull; {{ movie.release_date }}</span
+                    >
                 </span>
             </div>
             <p class="hidden sm:block text-sm mt-4">{{ movie.overview }}</p>
@@ -28,12 +37,14 @@
                     v-for="genreName in genreNames(movie.genre_ids)"
                     :key="genreName"
                     class="inline-block rounded-full px-1 mr-1 mb-1 text-xs tracking-wide break-word border bg-gray-400 sm:px-2 sm:py-1 sm:mr-2 sm:mb-2"
-                >{{ genreName }}</span>
+                    >{{ genreName }}</span
+                >
             </div>
             <a
                 href="#"
-                class="block text-right mt-4 text-xs underline text-indigo-600 hover:text-indigo-400"
-            >More Info >></a>
+                class="block text-right mt-4 text-xs underline text-indigo-600 hover:text-indigo-400 transition-all"
+                >More Info >></a
+            >
         </div>
     </div>
 </template>

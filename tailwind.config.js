@@ -23,8 +23,15 @@ module.exports = {
                     },
                 },
             }),
+            maxHeight: {
+                0: '0',
+                lg: '100000px',
+            },
         },
     },
     variants: {},
-    plugins: [require('@tailwindcss/custom-forms')],
+    plugins: [
+        require('@tailwindcss/custom-forms'),
+        require('tailwindcss-transitions')(),
+    ],
 };

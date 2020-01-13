@@ -4,10 +4,20 @@
         <div class="relative mt-20 max-w-6xl mx-auto">
             <div class="w-full lg:flex lg:items-start pt-6">
                 <div class="w-full lg:w-4/6 md:px-12 lg:px-6">
-                    <div class="flex items-baseline justify-between px-6 lg:px-0">
-                        <p class="text-sm text-gray-600 py-2">Total Results: 262</p>
-                        <button class="p-3 bg-gray-300 rounded-full lg:hidden">
-                            <svg class="fill-current text-gray-600 w-4 h-4" viewBox="0 0 20 20">
+                    <div
+                        class="flex items-baseline justify-between px-6 lg:px-0"
+                    >
+                        <p class="text-sm text-gray-600 py-2">
+                            Total Results: 262
+                        </p>
+                        <button
+                            @click="toggleSidebar"
+                            class="p-3 bg-gray-300 hover:bg-gray-400 rounded-full lg:hidden transition-bg focus:outline-none focus:shadow-outline"
+                        >
+                            <svg
+                                class="fill-current text-gray-600 w-4 h-4"
+                                viewBox="0 0 20 20"
+                            >
                                 <path
                                     d="M12.9 14.32a8 8 0 111.41-1.41l5.35 5.33-1.42 1.42-5.33-5.34zM8 14A6 6 0 108 2a6 6 0 000 12z"
                                 />
@@ -16,8 +26,11 @@
                     </div>
                     <MovieCard />
                 </div>
-                <div class="hidden lg:block lg:w-2/6 lg:px-6">
-                    <Sidebar />
+                <div class="lg:block lg:w-2/6 lg:px-6">
+                    <Sidebar
+                        :isSidebarExpand="isSidebarExpand"
+                        @toggleSidebar="toggleSidebar"
+                    />
                 </div>
             </div>
         </div>
@@ -37,5 +50,25 @@ import Sidebar from '@/components/Sidebar/Sidebar.vue';
         Sidebar,
     },
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+    isSidebarExpand: boolean = false;
+
+    toggleSidebar(): void {
+        this.isSidebarExpand = !this.isSidebarExpand;
+    }
+
+    onResize() {
+        if (window.innerWidth >= 1024) {
+            return (this.isSidebarExpand = true);
+        }
+    }
+
+    created() {
+        window.addEventListener('resize', this.onResize);
+    }
+
+    beforeDestroy() {
+        window.removeEventListener('resize', this.onResize);
+    }
+}
 </script>
