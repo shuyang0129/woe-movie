@@ -2,7 +2,7 @@
     <transition name="fadeIn">
         <div
             v-if="isSidebarOpen"
-            class="fixed inset-0 z-50 bg-gray-800 p-6 pb-8 overflow-y-scroll lg:relative lg:rounded-sm lg:shadow-md lg:z-30 lg:opacity-100"
+            class="fixed inset-0 z-50 bg-gray-800 p-6 pb-8 overflow-y-scroll lg:relative lg:rounded-sm lg:shadow-md lg:z-30"
         >
             <div class="mx-auto max-w-lg flex flex-col">
                 <!-- Close -->

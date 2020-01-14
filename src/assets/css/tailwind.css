@@ -2,6 +2,16 @@
 
 @tailwind components;
 
+*::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* Chrome/Safari/Webkit */
+}
+
+* {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+}
+
 .btn {
     @apply text-sm font-bold uppercase tracking-wide py-2 px-4 rounded;
     transition: all 0.3s ease-in-out;
