@@ -28,7 +28,8 @@
         "no-var-requires": false,
         "no-this-assignment": false,
         "indent": [true, "space", 4],
-        "quotemark": [true, "single"]
+        "quotemark": [true, "single"],
+        "curly": [true, "ignore-same-line"]
     },
     "rulesDirectory": ["tslint-plugin-prettier"]
 }

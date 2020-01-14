@@ -8,24 +8,12 @@
                         class="flex items-baseline justify-between px-6 lg:px-0"
                     >
                         <p class="text-sm text-gray-600 py-2">
-                            Total Results: 262
+                            Total Results: {{ totalResults }}
                         </p>
-                        <button
-                            @click="openSidebar"
-                            class="p-3 bg-gray-300 hover:bg-gray-400 rounded-full lg:hidden transition-bg focus:outline-none focus:shadow-outline"
-                        >
-                            <svg
-                                class="fill-current text-gray-600 w-4 h-4"
-                                viewBox="0 0 20 20"
-                            >
-                                <path
-                                    d="M12.9 14.32a8 8 0 111.41-1.41l5.35 5.33-1.42 1.42-5.33-5.34zM8 14A6 6 0 108 2a6 6 0 000 12z"
-                                />
-                            </svg>
-                        </button>
+                        <SidebarButton />
                     </div>
-                    <div v-for="i in 10" :key="i">
-                        <MovieCard />
+                    <div v-for="movie in movies" :key="movie.id">
+                        <MovieCard :movie="movie" :genres="genres" />
                     </div>
                 </div>
                 <div class="lg:block lg:w-2/6 lg:px-6">
@@ -38,33 +26,57 @@
 
 <script lang="ts">
 import { Component, Vue, Provide } from 'vue-property-decorator';
+import * as Interface from '@/models/interface/interface';
+import tmdbApi from '@/models/api/movies';
 import MovieCard from '@/components/MovieCard.vue';
 import Header from '@/components/Header/Header.vue';
 import Sidebar from '@/components/Sidebar/Sidebar.vue';
+import SidebarButton from '@/components/SidebarButton/SidebarButton.vue';
 
 @Component({
     components: {
         MovieCard,
         Header,
         Sidebar,
+        SidebarButton,
     },
 })
 export default class Home extends Vue {
-    isSidebarOpen: boolean = false;
+    isSidebarOpen: boolean = false; // open status of sidebar
+    movies: Interface.IMovies[] = []; // movie list from TMDB API
+    totalResults: number = 0; // total numbers of movie list
+    totalPages: number = 0; // total pages of movie list
+    currentPage: number = 1; // current page of AIP response
+    genres: Interface.IGenre[] = []; // genres list of movies
+
     @Provide() openSidebar() {
         this.isSidebarOpen = true;
     }
+
     @Provide() closeSidebar() {
         this.isSidebarOpen = false;
     }
 
+    // Show sidebar in large screen
     onResize() {
         window.innerWidth >= 1024 ? this.openSidebar() : this.closeSidebar();
     }
 
-    created() {
-        this.onResize();
-        window.addEventListener('resize', this.onResize);
+    async created() {
+        this.onResize(); // Check when reloading the page
+        window.addEventListener('resize', this.onResize); // Check when resizing the page
+
+        // GET request for TMDB movies
+        const data = await tmdbApi.getMovies();
+
+        this.movies = data.results;
+        this.totalResults = data.total_results;
+        this.totalPages = data.total_pages;
+        this.currentPage = data.page;
+
+        // GET request for genres list of movies
+        const genres = await tmdbApi.getGenres();
+        this.genres = genres;
     }
 
     beforeDestroy() {
