@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
 const tmdb = axios.create({
     method: 'get',
@@ -7,7 +7,7 @@ const tmdb = axios.create({
 
 // Add a request interceptor
 tmdb.interceptors.request.use(
-    config => {
+    (config: AxiosRequestConfig) => {
         // Do something before request is sent
         config.params = {
             ...config.params,
@@ -15,7 +15,7 @@ tmdb.interceptors.request.use(
         };
         return config;
     },
-    error => {
+    (error: AxiosError) => {
         // Do something with request error
         return Promise.reject(error);
     }
@@ -23,15 +23,16 @@ tmdb.interceptors.request.use(
 
 // Add a response interceptor
 tmdb.interceptors.response.use(
-    response => {
+    (response: AxiosResponse) => {
         // Any status code that lie within the range of 2xx cause this function to trigger
         // Do something with response data
         return response;
     },
-    error => {
+    (error: AxiosError) => {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
-        const errMsg = error.response.data.status_message || error;
+        const errMsg: string | undefined = (error.response as AxiosResponse)
+            .data.status_message;
         return Promise.reject(error);
     }
 );
