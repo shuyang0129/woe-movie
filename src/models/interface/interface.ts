@@ -34,3 +34,20 @@ export interface IMovies {
     overview: string;
     poster_path: string;
 }
+
+export interface IMovieSortBy {
+    name: string;
+    value: string;
+}
+
+export interface IKeywordIdResult {
+    name: string;
+    id: number;
+}
+
+export interface IKeywordIdResponse {
+    page: number;
+    results: IKeywordIdResult[];
+    total_pages: number;
+    total_results: number;
+}

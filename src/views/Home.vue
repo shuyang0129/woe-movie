@@ -8,16 +8,31 @@
                         class="flex items-baseline justify-between px-6 lg:px-0"
                     >
                         <p class="text-sm text-gray-600 py-2">
-                            Total Results: {{ totalResults }}
+                            Total Results: {{ isLoading ? '' : totalResults }}
                         </p>
                         <SidebarButton />
                     </div>
-                    <div v-for="movie in movies" :key="movie.id">
-                        <MovieCard :movie="movie" :genres="genres" />
+                    <p
+                        v-if="totalResults === 0 && !isLoading"
+                        class="text-base p-6 italic"
+                    >
+                        No results
+                    </p>
+                    <div v-else>
+                        <MovieCard
+                            v-for="movie in movies"
+                            :key="movie.id"
+                            :movie="movie"
+                            :genres="genres"
+                        />
                     </div>
                 </div>
                 <div class="lg:block lg:w-2/6 lg:px-6">
-                    <Sidebar :isSidebarOpen="isSidebarOpen" />
+                    <Sidebar
+                        :isSidebarOpen="isSidebarOpen"
+                        :genres="genres"
+                        @updateMovie="getAndUpdateMovies"
+                    />
                 </div>
             </div>
         </div>
@@ -48,6 +63,7 @@ export default class Home extends Vue {
     totalPages: number = 0; // total pages of movie list
     currentPage: number = 1; // current page of AIP response
     genres: Interface.IGenre[] = []; // genres list of movies
+    isLoading: boolean = false;
 
     @Provide() openSidebar() {
         this.isSidebarOpen = true;
@@ -55,6 +71,27 @@ export default class Home extends Vue {
 
     @Provide() closeSidebar() {
         this.isSidebarOpen = false;
+    }
+
+    async getAndUpdateMovies(query = {}) {
+        this.isLoading = true;
+        // GET request for TMDB movies
+        const data = await tmdbApi.getMovies(query);
+        // UPDATE data
+        this.movies = data.results;
+        this.totalResults = data.total_results;
+        this.totalPages = data.total_pages;
+        this.currentPage = data.page;
+
+        this.isLoading = false;
+
+        // If screen size less than 1024 and sidebar is open, close sidebar
+        if (window.innerWidth < 1024 && this.isSidebarOpen) {
+            this.closeSidebar();
+        }
+
+        // Scroll to top
+        window.scrollTo({ top: 0 });
     }
 
     // Show sidebar in large screen
@@ -66,15 +103,10 @@ export default class Home extends Vue {
         this.onResize(); // Check when reloading the page
         window.addEventListener('resize', this.onResize); // Check when resizing the page
 
-        // GET request for TMDB movies
-        const data = await tmdbApi.getMovies();
+        // GET and UPDATE movies
+        this.getAndUpdateMovies();
 
-        this.movies = data.results;
-        this.totalResults = data.total_results;
-        this.totalPages = data.total_pages;
-        this.currentPage = data.page;
-
-        // GET request for genres list of movies
+        // GET genres list of movies
         const genres = await tmdbApi.getGenres();
         this.genres = genres;
     }

@@ -4,8 +4,9 @@
     >
         <!-- Poster -->
         <img
+            v-if="movie.poster_path"
             class="h-32 shadow-md rounded-sm sm:h-48 md:h-56"
-            :src="`https://image.tmdb.org/t/p/original/${movie.poster_path}`"
+            :src="`https://image.tmdb.org/t/p/w185/${movie.poster_path}`"
             alt="movie poster"
         />
         <div class="pl-6">

@@ -15,7 +15,7 @@
 import { Component, Vue, Prop, Inject } from 'vue-property-decorator';
 
 @Component
-export default class Sideabr extends Vue {
+export default class SideBarButton extends Vue {
     @Inject() private openSidebar!: void;
 }
 </script>

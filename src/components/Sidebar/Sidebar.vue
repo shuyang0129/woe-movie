@@ -6,72 +6,82 @@
         >
             <div class="mx-auto max-w-lg flex flex-col">
                 <!-- Close -->
-                <button @click="closeSidebar" class="ml-auto lg:hidden">
-                    <svg
-                        class="fill-current text-gray-400 hover:text-gray-200 w-5 h-5"
-                        viewBox="0 0 20 20"
-                    >
-                        <path
-                            d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z"
-                        />
-                    </svg>
-                </button>
+                <CloseButton @handleClick="closeSidebar" />
                 <!-- Keyword -->
                 <label class="block">
                     <span class="form-label">Filter with Keyword</span>
                     <input
+                        v-model="keywords"
                         type="text"
                         class="form-input w-full"
-                        placeholder="Seperate with comma, ex spider man, xman"
+                        placeholder="Comma seperated keyword"
                     />
                 </label>
-                <!-- Genre -->
-                <span class="form-label">Genre</span>
-                <select class="form-select w-full">
-                    <option>Cemdy</option>
-                    <option>Horral</option>
-                </select>
                 <!-- Original Language -->
                 <span class="form-label">Original Language</span>
-                <select class="form-select w-full">
-                    <option>EN</option>
-                    <option>JP</option>
+                <select v-model="originalLanguage" class="form-select w-full">
+                    <option value="" selected>None</option>
+                    <option
+                        v-for="langCode in langCodes"
+                        :key="langCode"
+                        :value="langCode"
+                        >{{ getLangName(langCode) }} ({{
+                            langCode.toUpperCase()
+                        }})</option
+                    >
                 </select>
                 <!-- Sort By -->
                 <span class="form-label">Sort By</span>
                 <div>
-                    <label class="flex items-center">
+                    <label
+                        v-for="sortOpt in sortOpts"
+                        :key="sortOpt.name"
+                        class="flex items-center"
+                    >
                         <input
                             type="radio"
                             class="form-radio"
-                            name="accountType"
-                            value="personal"
-                            checked
+                            v-model="sortBy"
+                            :value="sortOpt.value"
+                            :checked="sortOpt.value === sortBy"
                         />
-                        <span class="ml-2">Genre</span>
-                    </label>
-                    <label class="flex items-center mt-1">
-                        <input
-                            type="radio"
-                            class="form-radio"
-                            name="accountType"
-                            value="busines"
-                        />
-                        <span class="ml-2">Rating</span>
+                        <span class="ml-2">{{ sortOpt.name }}</span>
                     </label>
                 </div>
-                <!-- Year Range -->
+                <!-- Release Year -->
                 <span class="form-label">Release Year</span>
                 <label class="block">
-                    <select class="form-select block w-full">
-                        <option>1988</option>
-                        <option>1988</option>
+                    <select
+                        v-model="releaseYear"
+                        class="form-select block w-full"
+                    >
+                        <option value="" selected>None</option>
+                        <option v-for="i in 101" :key="i">{{
+                            currentYear - i + 1
+                        }}</option>
                     </select>
                 </label>
+                <!-- Genre -->
+                <span class="form-label">Genre</span>
+                <label
+                    v-for="genre in genres"
+                    :key="genre.id"
+                    class="inline-flex items-center mt-2"
+                >
+                    <input
+                        v-model="selectedGenreIds"
+                        type="checkbox"
+                        class="form-checkbox text-gray-600"
+                        :value="genre.id"
+                    />
+                    <span class="ml-2">{{ genre.name }}</span>
+                </label>
                 <!-- Inlclude Video -->
-                <div class="mt-6 mb-2">
+                <span class="form-label">Inlclude Video</span>
+                <div class="block">
                     <label class="inline-flex items-center">
                         <input
+                            v-model="isInludeVideo"
                             type="checkbox"
                             class="form-checkbox text-gray-600"
                         />
@@ -79,11 +89,17 @@
                     </label>
                 </div>
                 <!-- Submit & Reset -->
-                <button class="w-full btn btn-indigo-3d mt-6 rounded">
-                    Submit
+                <button
+                    @click="getFilteredMovies"
+                    class="w-full btn btn-indigo-3d mt-6 rounded"
+                >
+                    Filter
                 </button>
-                <button class="w-full btn btn-gray-3d mt-4 rounded">
-                    Reset
+                <button
+                    @click="resetMovies"
+                    class="w-full btn btn-gray-3d mt-4 rounded"
+                >
+                    Reset Filter
                 </button>
             </div>
         </div>
@@ -91,26 +107,106 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Inject } from 'vue-property-decorator';
+import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
+import tmdbApi from '@/models/api/movies';
+import { QueryKey } from '@/models/enum/enum';
+import * as Interface from '@/models/interface/interface';
+import CloseButton from '@/components/CloseButton/CloseButton.vue';
+import ISO6391 from 'iso-639-1';
 
 @Component({
-    components: {},
+    components: {
+        CloseButton,
+    },
 })
-export default class Sideabr extends Vue {
+export default class SideBar extends Vue {
+    @Inject() closeSidebar!: void;
+    @Prop() readonly genres!: Interface.IGenre[];
     @Prop() readonly isSidebarOpen!: boolean;
-    @Inject() private closeSidebar!: void;
+
+    readonly sortOpts: Interface.IMovieSortBy[] = [
+        {
+            name: 'Popularity (Overall)',
+            value: 'popularity.desc',
+        },
+        {
+            name: 'Rating',
+            value: 'vote_average.desc',
+        },
+        {
+            name: 'Release Date',
+            value: 'primary_release_date.desc',
+        },
+    ];
+
+    keywords: string = '';
+    selectedGenreIds: string[] = []; // IDs of selected genres
+    originalLanguage: string = ''; // Orginal language of movie
+    sortBy: string = this.sortOpts[0].value;
+    releaseYear: string = ''; // Release year of movie
+    isInludeVideo: boolean = false; // Does include videos about movies
+
+    get currentYear(): string {
+        return new Date().getFullYear().toString();
+    }
+
+    get langCodes() {
+        return ISO6391.getAllCodes(); // en
+    }
+
+    getLangName(code: string): string {
+        return ISO6391.getName(code); // en -> English
+    }
+
+    async getKeywordIds(keywordValue: string) {
+        // Convert keyword input into array
+        const keywordToArr: string[] = keywordValue.split(',');
+
+        // Loop each keyword to get keyword ids
+        const getIds = keywordToArr.map(async keyword => {
+            const result = await tmdbApi.getKeywordId(keyword.trim());
+            return result.join('|'); // Seperate by pipe character, means OR
+        });
+
+        const keywordIds = await Promise.all(getIds);
+
+        // Return a string join by pipeline
+        return keywordIds.join('|');
+    }
+
+    async getFilteredMovies() {
+        // Convert filter options to query params
+        const query: any = {};
+
+        query[QueryKey.WITH_ORIDINAL_LANGUAGE] = this.originalLanguage;
+        query[QueryKey.SORT_BY] = this.sortBy;
+        query[QueryKey.PRIMARY_RELEASE_YEAR] = this.releaseYear;
+        query[QueryKey.WITH_GENRES] = this.selectedGenreIds.join(',');
+
+        // If keyword input is not empty but with no valid ids return, show no results
+        const keywordIds = await this.getKeywordIds(this.keywords);
+        query[QueryKey.WITH_KEYWORDS] =
+            !keywordIds && this.keywords ? -1 : keywordIds;
+
+        // Emit update movie event with query strings
+        this.$emit('updateMovie', query);
+    }
+
+    resetMovies() {
+        // Reset filter option to default
+        this.keywords = '';
+        this.selectedGenreIds = [];
+        this.originalLanguage = '';
+        this.sortBy = this.sortOpts[0].value;
+        this.releaseYear = '';
+        this.isInludeVideo = false;
+
+        // Emit update movie event
+        this.$emit('updateMovie');
+    }
 }
 </script>
-<style scoped>
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
+<style lang="scss" scoped>
 .fadeIn-enter-active {
     animation: 0.3s fadeIn ease-in-out;
 }

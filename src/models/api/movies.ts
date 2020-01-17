@@ -1,4 +1,4 @@
-import axios from '@/utilities/http';
+import axios from '@/utilities/api-handler';
 import * as Interface from '@/models/interface/interface';
 
 export default {
@@ -13,5 +13,18 @@ export default {
     async getGenres(): Promise<Interface.IGenre[]> {
         const { data } = await axios('/genre/movie/list');
         return data.genres;
+    },
+    // GET id of keyword
+    async getKeywordId(query: string): Promise<number[]> {
+        if (query) {
+            const { data } = await axios('/search/keyword', {
+                params: { query },
+            });
+            const ids = data.results.map(
+                (result: Interface.IKeywordIdResult) => result.id
+            );
+            return ids;
+        }
+        return [];
     },
 };
