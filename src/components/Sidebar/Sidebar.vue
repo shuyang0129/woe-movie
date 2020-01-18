@@ -22,13 +22,14 @@
                 <select v-model="originalLanguage" class="form-select w-full">
                     <option value="" selected>None</option>
                     <option
-                        v-for="langCode in langCodes"
-                        :key="langCode"
-                        :value="langCode"
-                        >{{ getLangName(langCode) }} ({{
-                            langCode.toUpperCase()
-                        }})</option
+                        v-for="langName in langNames"
+                        :key="langName"
+                        :value="getLangCode(langName)"
                     >
+                        {{ langName }} ({{
+                            getLangCode(langName).toUpperCase()
+                        }})
+                    </option>
                 </select>
                 <!-- Sort By -->
                 <span class="form-label">Sort By</span>
@@ -150,13 +151,21 @@ export default class SideBar extends Vue {
         return new Date().getFullYear().toString();
     }
 
-    get langCodes() {
-        return ISO6391.getAllCodes(); // en
+    // get langCodes() {
+    //     return ISO6391.getAllCodes(); // [en, ...]
+    // }
+
+    get langNames() {
+        return ISO6391.getAllNames().sort(); // [English, Japanese, ...]
     }
 
-    getLangName(code: string): string {
-        return ISO6391.getName(code); // en -> English
+    getLangCode(langName: string): string {
+        return ISO6391.getCode(langName); // Englishg -> en
     }
+
+    // getLangName(code: string): string {
+    //     return ISO6391.getName(code); // en -> English
+    // }
 
     async getKeywordIds(keywordValue: string) {
         // Convert keyword input into array
