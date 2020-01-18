@@ -1,7 +1,10 @@
 <template>
-    <div class="h-full">
+    <div class="h-full overflow-y-hidden">
         <Header />
-        <div class="relative mt-20 max-w-6xl mx-auto">
+        <div
+            class="relative mt-20 max-w-6xl mx-auto overflow-y-scroll"
+            ref="movie-list"
+        >
             <div class="w-full lg:flex lg:items-start pt-6">
                 <div class="w-full h-screen lg:w-4/6 md:px-12 lg:px-6">
                     <div
@@ -77,6 +80,7 @@ export default class Home extends Vue {
         this.isLoading = true;
         // GET request for TMDB movies
         const data = await tmdbApi.getMovies(query);
+        console.log(data.results);
         // UPDATE data
         this.movies = data.results;
         this.totalResults = data.total_results;
@@ -109,6 +113,19 @@ export default class Home extends Vue {
         // GET genres list of movies
         const genres = await tmdbApi.getGenres();
         this.genres = genres;
+
+        // Scroll loading movies
+        const movieContainer = (this as typeof Vue.prototype).$refs[
+            'movie-list'
+        ];
+        movieContainer.addEventListener('scroll', () => {
+            const bottomOfWindow =
+                movieContainer.scrollTop + movieContainer.clientHeight >=
+                movieContainer.scrollHeight;
+            if (bottomOfWindow) {
+                console.log('Load!');
+            }
+        });
     }
 
     beforeDestroy() {
