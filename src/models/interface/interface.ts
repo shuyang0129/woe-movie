@@ -51,3 +51,13 @@ export interface IKeywordIdResponse {
     total_pages: number;
     total_results: number;
 }
+
+export interface IMovieQeury {
+    ['with_keywords']?: string[] | number[];
+    ['with_original_language']?: string;
+    ['sort_by']?: string;
+    ['primary_release_year']?: string | number;
+    ['with_genres']?: string[] | number[];
+    ['include_video']?: boolean;
+    ['page']?: string | number;
+}

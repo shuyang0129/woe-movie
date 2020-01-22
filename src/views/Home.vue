@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full overflow-y-hidden">
+    <div class="h-full">
         <Header />
         <div
             class="relative mt-20 max-w-6xl mx-auto overflow-y-scroll"
@@ -45,6 +45,7 @@
 <script lang="ts">
 import { Component, Vue, Provide } from 'vue-property-decorator';
 import * as Interface from '@/models/interface/interface';
+import { QueryKey } from '@/models/enum/enum';
 import tmdbApi from '@/models/api/movies';
 import MovieCard from '@/components/MovieCard.vue';
 import Header from '@/components/Header/Header.vue';
@@ -79,10 +80,11 @@ export default class Home extends Vue {
     async getAndUpdateMovies(query = {}) {
         this.isLoading = true;
         // GET request for TMDB movies
-        const data = await tmdbApi.getMovies(query);
+        const data: Interface.IMoviesResponse = await tmdbApi.getMovies(query);
         console.log(data.results);
         // UPDATE data
-        this.movies = data.results;
+        // this.movies = this.movies.concat(data.results);
+        this.movies = this.movies.concat(data.results);
         this.totalResults = data.total_results;
         this.totalPages = data.total_pages;
         this.currentPage = data.page;
@@ -124,6 +126,10 @@ export default class Home extends Vue {
                 movieContainer.scrollHeight;
             if (bottomOfWindow) {
                 console.log('Load!');
+                this.currentPage++;
+                const query: any = {};
+                query[QueryKey.PAGE] = this.currentPage;
+                this.getAndUpdateMovies(query);
             }
         });
     }

@@ -108,7 +108,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
+import { Component, Vue, Prop, Inject } from 'vue-property-decorator';
+import { Action, Mutation } from 'vuex-class';
 import tmdbApi from '@/models/api/movies';
 import { QueryKey } from '@/models/enum/enum';
 import * as Interface from '@/models/interface/interface';
@@ -124,6 +125,8 @@ export default class SideBar extends Vue {
     @Inject() closeSidebar!: void;
     @Prop() readonly genres!: Interface.IGenre[];
     @Prop() readonly isSidebarOpen!: boolean;
+    @Action('movieQuery/setQuery') private setQuery!: any;
+    @Mutation('movieQuery/resetQuery') private resetQuery!: any;
 
     readonly sortOpts: Interface.IMovieSortBy[] = [
         {
@@ -151,10 +154,6 @@ export default class SideBar extends Vue {
         return new Date().getFullYear().toString();
     }
 
-    // get langCodes() {
-    //     return ISO6391.getAllCodes(); // [en, ...]
-    // }
-
     get langNames() {
         return ISO6391.getAllNames().sort(); // [English, Japanese, ...]
     }
@@ -162,10 +161,6 @@ export default class SideBar extends Vue {
     getLangCode(langName: string): string {
         return ISO6391.getCode(langName); // Englishg -> en
     }
-
-    // getLangName(code: string): string {
-    //     return ISO6391.getName(code); // en -> English
-    // }
 
     async getKeywordIds(keywordValue: string) {
         // Convert keyword input into array
@@ -191,12 +186,16 @@ export default class SideBar extends Vue {
         query[QueryKey.SORT_BY] = this.sortBy;
         query[QueryKey.PRIMARY_RELEASE_YEAR] = this.releaseYear;
         query[QueryKey.WITH_GENRES] = this.selectedGenreIds.join(',');
+        query[QueryKey.PAGE] = 1;
+        query[QueryKey.INCLUDE_VIDOE] = this.isInludeVideo;
 
         // If keyword input is not empty but with no valid ids return, show no results
         const keywordIds = await this.getKeywordIds(this.keywords);
         query[QueryKey.WITH_KEYWORDS] =
             !keywordIds && this.keywords ? -1 : keywordIds;
 
+        // Update query options to vuex
+        this.setQuery(query);
         // Emit update movie event with query strings
         this.$emit('updateMovie', query);
     }
@@ -210,6 +209,8 @@ export default class SideBar extends Vue {
         this.releaseYear = '';
         this.isInludeVideo = false;
 
+        // Update query options to vuex
+        this.resetQuery();
         // Emit update movie event
         this.$emit('updateMovie');
     }
