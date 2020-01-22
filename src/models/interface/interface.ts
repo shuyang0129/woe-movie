@@ -53,11 +53,11 @@ export interface IKeywordIdResponse {
 }
 
 export interface IMovieQeury {
-    ['with_keywords']?: string[] | number[];
+    ['with_keywords']?: string;
     ['with_original_language']?: string;
     ['sort_by']?: string;
-    ['primary_release_year']?: string | number;
-    ['with_genres']?: string[] | number[];
+    ['primary_release_year']?: number;
+    ['with_genres']?: string;
     ['include_video']?: boolean;
-    ['page']?: string | number;
+    ['page']: number;
 }

@@ -1,12 +1,9 @@
 <template>
-    <div class="h-full">
+    <div class="h-full overflow-y-scroll scrolling-touch" ref="movie-list">
         <Header />
-        <div
-            class="relative mt-20 max-w-6xl mx-auto overflow-y-scroll"
-            ref="movie-list"
-        >
+        <div class="relative mt-16 pb-20 max-w-6xl mx-auto">
             <div class="w-full lg:flex lg:items-start pt-6">
-                <div class="w-full h-screen lg:w-4/6 md:px-12 lg:px-6">
+                <div class="w-full h-full lg:w-4/6 md:px-12 lg:px-6">
                     <div
                         class="flex items-baseline justify-between px-6 lg:px-0"
                     >
@@ -31,11 +28,13 @@
                     </div>
                 </div>
                 <div class="lg:block lg:w-2/6 lg:px-6">
-                    <Sidebar
-                        :isSidebarOpen="isSidebarOpen"
-                        :genres="genres"
-                        @updateMovie="getAndUpdateMovies"
-                    />
+                    <keep-alive>
+                        <Sidebar
+                            :isSidebarOpen="isSidebarOpen"
+                            :genres="genres"
+                            @updateMovie="getAndUpdateMovies"
+                        />
+                    </keep-alive>
                 </div>
             </div>
         </div>
@@ -46,6 +45,7 @@
 import { Component, Vue, Provide } from 'vue-property-decorator';
 import * as Interface from '@/models/interface/interface';
 import { QueryKey } from '@/models/enum/enum';
+import { Getter, Action } from 'vuex-class';
 import tmdbApi from '@/models/api/movies';
 import MovieCard from '@/components/MovieCard.vue';
 import Header from '@/components/Header/Header.vue';
@@ -69,6 +69,9 @@ export default class Home extends Vue {
     genres: Interface.IGenre[] = []; // genres list of movies
     isLoading: boolean = false;
 
+    @Getter('movieQuery/getQuery') private getQuery!: Interface.IMovieQeury;
+    @Action('movieQuery/setQuery') private setQuery!: any;
+
     @Provide() openSidebar() {
         this.isSidebarOpen = true;
     }
@@ -77,17 +80,20 @@ export default class Home extends Vue {
         this.isSidebarOpen = false;
     }
 
-    async getAndUpdateMovies(query = {}) {
+    async getAndUpdateMovies() {
         this.isLoading = true;
+        // Get movieQuery from Vuex
+        const query = this.getQuery;
         // GET request for TMDB movies
         const data: Interface.IMoviesResponse = await tmdbApi.getMovies(query);
-        console.log(data.results);
         // UPDATE data
-        // this.movies = this.movies.concat(data.results);
-        this.movies = this.movies.concat(data.results);
         this.totalResults = data.total_results;
         this.totalPages = data.total_pages;
         this.currentPage = data.page;
+        this.movies =
+            query.page > 1 && query.page > this.currentPage
+                ? this.movies.concat(data.results)
+                : data.results;
 
         this.isLoading = false;
 
@@ -95,7 +101,6 @@ export default class Home extends Vue {
         if (window.innerWidth < 1024 && this.isSidebarOpen) {
             this.closeSidebar();
         }
-
         // Scroll to top
         window.scrollTo({ top: 0 });
     }
@@ -103,6 +108,25 @@ export default class Home extends Vue {
     // Show sidebar in large screen
     onResize() {
         window.innerWidth >= 1024 ? this.openSidebar() : this.closeSidebar();
+    }
+
+    scrollLoad(scrollElement: HTMLElement): void {
+        if (scrollElement) {
+            scrollElement.addEventListener('scroll', () => {
+                const bottomOfWindow =
+                    scrollElement.scrollTop + scrollElement.clientHeight >=
+                    scrollElement.scrollHeight;
+                if (bottomOfWindow) {
+                    const query = this.getQuery;
+                    // Skip if that is all the request result
+                    if (query.page >= this.totalPages) return;
+                    // If not, request more data
+                    query.page++;
+                    this.setQuery(query);
+                    this.getAndUpdateMovies();
+                }
+            });
+        }
     }
 
     async created() {
@@ -117,21 +141,8 @@ export default class Home extends Vue {
         this.genres = genres;
 
         // Scroll loading movies
-        const movieContainer = (this as typeof Vue.prototype).$refs[
-            'movie-list'
-        ];
-        movieContainer.addEventListener('scroll', () => {
-            const bottomOfWindow =
-                movieContainer.scrollTop + movieContainer.clientHeight >=
-                movieContainer.scrollHeight;
-            if (bottomOfWindow) {
-                console.log('Load!');
-                this.currentPage++;
-                const query: any = {};
-                query[QueryKey.PAGE] = this.currentPage;
-                this.getAndUpdateMovies(query);
-            }
-        });
+        const movieContainer = this.$refs['movie-list'] as HTMLElement;
+        this.scrollLoad(movieContainer);
     }
 
     beforeDestroy() {

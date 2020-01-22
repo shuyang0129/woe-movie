@@ -1,31 +1,38 @@
+/* tslint:disable:no-shadowed-variable */
 import { IActionContextBasic } from '@/store/index';
 import * as Interface from '@/models/interface/interface';
-import { QueryKey } from '@/models/enum/enum';
 
 interface IState {
     query: Interface.IMovieQeury;
 }
 
+const SET_QUERY = 'setQuery';
+const RESET_QUERY = 'resetQuery';
+
+// STATE
 const state: IState = {
-    query: {},
+    query: { page: 1 },
 };
 
+// GETTER
 const getters = {
     getQuery: (state: IState) => state.query,
 };
 
+// MUTATIONS
 const mutations = {
-    setQuery(state: IState, payload: Interface.IMovieQeury) {
+    [SET_QUERY](state: IState, payload: Interface.IMovieQeury) {
         state.query = payload;
     },
-    resetQuery(state: IState) {
-        state.query = {};
+    [RESET_QUERY](state: IState) {
+        state.query = { page: 1 };
     },
 };
 
+// ACTIONS
 const actions = {
     async setQuery(context: IActionContextBasic, data: Interface.IMovieQeury) {
-        context.commit('setQuery', data);
+        context.commit(SET_QUERY, data);
     },
 };
 

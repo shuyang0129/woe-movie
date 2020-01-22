@@ -2,7 +2,7 @@
     <transition name="fadeIn">
         <div
             v-if="isSidebarOpen"
-            class="fixed inset-0 z-50 bg-gray-800 p-6 pb-8 overflow-y-scroll lg:relative lg:rounded-sm lg:shadow-md lg:z-30"
+            class="fixed inset-0 z-50 bg-gray-800 p-6 pb-8 overflow-y-scroll scrolling-touch lg:relative lg:rounded-sm lg:shadow-md lg:z-30"
         >
             <div class="mx-auto max-w-lg flex flex-col">
                 <!-- Close -->
@@ -109,7 +109,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Inject } from 'vue-property-decorator';
-import { Action, Mutation } from 'vuex-class';
+import { Action, Mutation, Getter } from 'vuex-class';
 import tmdbApi from '@/models/api/movies';
 import { QueryKey } from '@/models/enum/enum';
 import * as Interface from '@/models/interface/interface';
@@ -125,8 +125,9 @@ export default class SideBar extends Vue {
     @Inject() closeSidebar!: void;
     @Prop() readonly genres!: Interface.IGenre[];
     @Prop() readonly isSidebarOpen!: boolean;
-    @Action('movieQuery/setQuery') private setQuery!: any;
-    @Mutation('movieQuery/resetQuery') private resetQuery!: any;
+    @Getter('movieQuery/getQuery') getQuery!: Interface.IMovieQeury;
+    @Mutation('movieQuery/resetQuery') resetQuery!: any;
+    @Action('movieQuery/setQuery') setQuery!: any;
 
     readonly sortOpts: Interface.IMovieSortBy[] = [
         {
