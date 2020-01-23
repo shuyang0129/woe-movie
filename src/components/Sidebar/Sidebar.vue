@@ -199,6 +199,7 @@ export default class SideBar extends Vue {
         this.setQuery(query);
         // Emit update movie event with query strings
         this.$emit('updateMovie', query);
+        this.$emit('scrollTop');
     }
 
     resetMovies() {
@@ -214,6 +215,7 @@ export default class SideBar extends Vue {
         this.resetQuery();
         // Emit update movie event
         this.$emit('updateMovie');
+        this.$emit('scrollTop');
     }
 }
 </script>

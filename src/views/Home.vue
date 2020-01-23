@@ -1,22 +1,23 @@
 <template>
-    <div class="h-full overflow-y-scroll scrolling-touch" ref="movie-list">
-        <Header />
-        <div class="relative mt-16 pb-20 max-w-6xl mx-auto">
-            <div class="w-full lg:flex lg:items-start pt-6">
-                <div class="w-full h-full lg:w-4/6 md:px-12 lg:px-6">
-                    <ScrollTopButton
-                        :isScrollTopShow="isScrollTopShow"
-                        @scrollTop="scrollTop"
-                    />
-                    <div
-                        class="flex items-baseline justify-between px-6 lg:px-0"
-                    >
-                        <p class="text-sm text-gray-600 py-2">
-                            Total Results: {{ isLoading ? '' : totalResults }}
-                        </p>
-                        <SidebarButton />
-                    </div>
-                    <keep-alive>
+    <keep-alive>
+        <div class="h-full overflow-y-scroll scrolling-touch" ref="movie-list">
+            <Header />
+            <div class="relative mt-16 pb-20 max-w-6xl mx-auto">
+                <div class="w-full lg:flex lg:items-start pt-6">
+                    <div class="w-full h-full lg:w-4/6 md:px-12 lg:px-6">
+                        <ScrollTopButton
+                            :isScrollTopShow="isScrollTopShow"
+                            @scrollTop="scrollTop"
+                        />
+                        <div
+                            class="flex items-baseline justify-between px-6 lg:px-0"
+                        >
+                            <p class="text-sm text-gray-600 py-2">
+                                Total Results:
+                                {{ isLoading ? '' : totalResults }}
+                            </p>
+                            <SidebarButton />
+                        </div>
                         <p
                             v-if="totalResults === 0 && !isLoading"
                             class="text-base p-6 italic"
@@ -31,20 +32,19 @@
                                 :genres="genres"
                             />
                         </div>
-                    </keep-alive>
-                </div>
-                <div class="lg:block lg:w-2/6 lg:px-6">
-                    <keep-alive>
+                    </div>
+                    <div class="lg:block lg:w-2/6 lg:px-6">
                         <Sidebar
                             :isSidebarOpen="isSidebarOpen"
                             :genres="genres"
                             @updateMovie="getAndUpdateMovies"
+                            @scrollTop="scrollTop"
                         />
-                    </keep-alive>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </keep-alive>
 </template>
 
 <script lang="ts">
@@ -111,8 +111,6 @@ export default class Home extends Vue {
         if (window.innerWidth < 1024 && this.isSidebarOpen) {
             this.closeSidebar();
         }
-        // Scroll to top
-        this.scrollTop();
     }
 
     // Show sidebar in large screen
@@ -121,11 +119,11 @@ export default class Home extends Vue {
     }
 
     scrollLoad(): void {
-        const query = this.getQuery; // Current request page
         const movieContainer = this.$refs['movie-list'] as HTMLElement;
         if (!movieContainer) return;
 
         movieContainer.addEventListener('scroll', () => {
+            const query = this.getQuery;
             // REACH BOTTOM: scrollTop + clientHeight = scrollHeight
             const bottomOfWindow =
                 movieContainer.scrollTop + movieContainer.clientHeight >=
@@ -163,6 +161,13 @@ export default class Home extends Vue {
     async created() {
         this.onResize(); // Check when reloading the page
         window.addEventListener('resize', this.onResize); // Check when resizing the page
+
+        // If on window top, load first page with query options
+        if (window.scrollY === 0) {
+            const query = this.getQuery;
+            query.page = 1;
+            this.setQuery(query);
+        }
 
         // GET and UPDATE movies
         this.getAndUpdateMovies();
