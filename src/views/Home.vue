@@ -4,6 +4,10 @@
         <div class="relative mt-16 pb-20 max-w-6xl mx-auto">
             <div class="w-full lg:flex lg:items-start pt-6">
                 <div class="w-full h-full lg:w-4/6 md:px-12 lg:px-6">
+                    <ScrollTopButton
+                        :isScrollTopShow="isScrollTopShow"
+                        @scrollTop="scrollTop"
+                    />
                     <div
                         class="flex items-baseline justify-between px-6 lg:px-0"
                     >
@@ -12,20 +16,22 @@
                         </p>
                         <SidebarButton />
                     </div>
-                    <p
-                        v-if="totalResults === 0 && !isLoading"
-                        class="text-base p-6 italic"
-                    >
-                        No results
-                    </p>
-                    <div v-else>
-                        <MovieCard
-                            v-for="movie in movies"
-                            :key="movie.id"
-                            :movie="movie"
-                            :genres="genres"
-                        />
-                    </div>
+                    <keep-alive>
+                        <p
+                            v-if="totalResults === 0 && !isLoading"
+                            class="text-base p-6 italic"
+                        >
+                            No results
+                        </p>
+                        <div v-else class="relative">
+                            <MovieCard
+                                v-for="movie in movies"
+                                :key="movie.id"
+                                :movie="movie"
+                                :genres="genres"
+                            />
+                        </div>
+                    </keep-alive>
                 </div>
                 <div class="lg:block lg:w-2/6 lg:px-6">
                     <keep-alive>
@@ -42,6 +48,7 @@
 </template>
 
 <script lang="ts">
+import { TweenMax, Power3 } from 'gsap';
 import { Component, Vue, Provide } from 'vue-property-decorator';
 import * as Interface from '@/models/interface/interface';
 import { QueryKey } from '@/models/enum/enum';
@@ -51,6 +58,7 @@ import MovieCard from '@/components/MovieCard.vue';
 import Header from '@/components/Header/Header.vue';
 import Sidebar from '@/components/Sidebar/Sidebar.vue';
 import SidebarButton from '@/components/SidebarButton/SidebarButton.vue';
+import ScrollTopButton from '@/components/ScrollTopButton/ScrollTopButton.vue';
 
 @Component({
     components: {
@@ -58,6 +66,7 @@ import SidebarButton from '@/components/SidebarButton/SidebarButton.vue';
         Header,
         Sidebar,
         SidebarButton,
+        ScrollTopButton,
     },
 })
 export default class Home extends Vue {
@@ -68,6 +77,7 @@ export default class Home extends Vue {
     currentPage: number = 1; // current page of AIP response
     genres: Interface.IGenre[] = []; // genres list of movies
     isLoading: boolean = false;
+    isScrollTopShow: boolean = false;
 
     @Getter('movieQuery/getQuery') private getQuery!: Interface.IMovieQeury;
     @Action('movieQuery/setQuery') private setQuery!: any;
@@ -87,13 +97,13 @@ export default class Home extends Vue {
         // GET request for TMDB movies
         const data: Interface.IMoviesResponse = await tmdbApi.getMovies(query);
         // UPDATE data
-        this.totalResults = data.total_results;
-        this.totalPages = data.total_pages;
-        this.currentPage = data.page;
         this.movies =
             query.page > 1 && query.page > this.currentPage
                 ? this.movies.concat(data.results)
                 : data.results;
+        this.totalResults = data.total_results;
+        this.totalPages = data.total_pages;
+        this.currentPage = data.page;
 
         this.isLoading = false;
 
@@ -102,7 +112,7 @@ export default class Home extends Vue {
             this.closeSidebar();
         }
         // Scroll to top
-        window.scrollTo({ top: 0 });
+        this.scrollTop();
     }
 
     // Show sidebar in large screen
@@ -110,23 +120,44 @@ export default class Home extends Vue {
         window.innerWidth >= 1024 ? this.openSidebar() : this.closeSidebar();
     }
 
-    scrollLoad(scrollElement: HTMLElement): void {
-        if (scrollElement) {
-            scrollElement.addEventListener('scroll', () => {
-                const bottomOfWindow =
-                    scrollElement.scrollTop + scrollElement.clientHeight >=
-                    scrollElement.scrollHeight;
-                if (bottomOfWindow) {
-                    const query = this.getQuery;
-                    // Skip if that is all the request result
-                    if (query.page >= this.totalPages) return;
-                    // If not, request more data
-                    query.page++;
-                    this.setQuery(query);
-                    this.getAndUpdateMovies();
-                }
-            });
-        }
+    scrollLoad(): void {
+        const query = this.getQuery; // Current request page
+        const movieContainer = this.$refs['movie-list'] as HTMLElement;
+        if (!movieContainer) return;
+
+        movieContainer.addEventListener('scroll', () => {
+            // REACH BOTTOM: scrollTop + clientHeight = scrollHeight
+            const bottomOfWindow =
+                movieContainer.scrollTop + movieContainer.clientHeight >=
+                movieContainer.scrollHeight;
+
+            if (bottomOfWindow && query.page < this.totalPages) {
+                // Scroll loading
+                query.page++;
+                this.setQuery(query);
+                this.getAndUpdateMovies();
+            }
+        });
+    }
+
+    showScrollTopButton(): void {
+        const movieContainer = this.$refs['movie-list'] as HTMLElement;
+        if (!movieContainer) return;
+
+        movieContainer.addEventListener('scroll', () => {
+            this.isScrollTopShow =
+                movieContainer.scrollTop > 900 ? true : false;
+        });
+    }
+
+    scrollTop() {
+        const movieContainer = this.$refs['movie-list'] as HTMLElement;
+        if (!movieContainer) return;
+
+        TweenMax.to(movieContainer, 0.5, {
+            scrollTop: 0,
+            ease: Power3.easeInOut,
+        });
     }
 
     async created() {
@@ -141,12 +172,18 @@ export default class Home extends Vue {
         this.genres = genres;
 
         // Scroll loading movies
-        const movieContainer = this.$refs['movie-list'] as HTMLElement;
-        this.scrollLoad(movieContainer);
+        this.scrollLoad();
+
+        // Show scroll top button
+        this.showScrollTopButton();
     }
 
     beforeDestroy() {
+        const movieContainer = this.$refs['movie-list'] as HTMLElement;
+
         window.removeEventListener('resize', this.onResize);
+        movieContainer.removeEventListener('scroll', this.scrollLoad);
+        movieContainer.removeEventListener('scroll', this.showScrollTopButton);
     }
 }
 </script>
