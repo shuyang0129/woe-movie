@@ -10,6 +10,16 @@ const routes = [
         name: 'home',
         component: Home,
     },
+    {
+        path: '/movies',
+        name: 'discoverMovie',
+        component: () => import('@/views/Movies.vue'),
+    },
+    {
+        path: '/movies/:movieId',
+        name: 'movieDetail',
+        component: () => import('@/views/MovieDetail.vue'),
+    },
 ];
 
 const router = new VueRouter({

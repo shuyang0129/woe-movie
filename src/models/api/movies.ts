@@ -27,4 +27,9 @@ export default {
         }
         return [];
     },
+    // GET movie detail
+    async getMovieDetail(movieId: number) {
+        const { data } = await axios(`/movie/${movieId}`);
+        return data;
+    },
 };
