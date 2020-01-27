@@ -28,7 +28,7 @@ export default {
         return [];
     },
     // GET movie detail
-    async getMovieDetail(movieId: number) {
+    async getMovieDetail(movieId: number | string) {
         const { data } = await axios(`/movie/${movieId}`);
         return data;
     },

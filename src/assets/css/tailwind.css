@@ -12,6 +12,10 @@
     -ms-overflow-style: none;
 }
 
+.bg-blur {
+    filter: blur(8px);
+}
+
 .btn {
     @apply text-sm font-bold uppercase tracking-wide py-2 px-4 rounded;
     transition: all 0.3s ease-in-out;
@@ -37,7 +41,17 @@
 }
 
 .form-label {
-    @apply mt-6 mb-2 inline-block text-gray-300 font-semibold text-sm;
+    @apply pt-6 pb-2 inline-block text-gray-300 font-semibold text-sm;
+}
+
+.section-title {
+    @apply pt-6 pb-2 inline-block text-gray-300 font-semibold text-sm;
+}
+
+@screen sm {
+    .section-title {
+        @apply pt-8 pb-4 text-base;
+    }
 }
 
 .btn-indigo-3d {

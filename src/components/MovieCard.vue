@@ -1,7 +1,5 @@
 <template>
-    <div
-        class="flex items-start py-6 pr-6 ml-6 border-b border-gray-400 lg:pr-0 lg:ml-0"
-    >
+    <div class="flex items-start py-6 pr-6 ml-6 border-b border-gray-400 lg:pr-0 lg:ml-0">
         <!-- Poster -->
         <img
             v-if="movie.poster_path"
@@ -11,25 +9,19 @@
         />
         <div class="pl-6">
             <div class="flex items-center">
-                <h4 class="font-semibold text-lg text-gray-700">
-                    {{ movie.title }}
-                </h4>
+                <h4 class="font-semibold text-lg text-gray-700">{{ movie.title }}</h4>
                 <span
                     class="ml-2 text-xs font-semibold text-gray-500 uppercase tracking-wide"
-                    >{{ movie.original_language }}</span
-                >
+                >{{ movie.original_language }}</span>
             </div>
             <div class="flex items-center sm:mt-1">
-                <StarIcon
-                    :scoreOfStars="scoreOfStarts"
-                    :color="'text-yellow-600'"
-                />
+                <StarIcon :scoreOfStars="scoreOfStars" :color="'text-yellow-600'" />
                 <span class="text-xs font-semibold ml-2">
-                    {{ scoreOfStarts }}
+                    {{ scoreOfStars }}
                     ({{ movie.vote_count }})
-                    <span class="text-xs font-semibold hidden sm:inline-block"
-                        >&bull; {{ movie.release_date }}</span
-                    >
+                    <span
+                        class="text-xs font-semibold hidden sm:inline-block"
+                    >&bull; {{ movie.release_date }}</span>
                 </span>
             </div>
             <p class="hidden sm:block text-sm mt-4">{{ movie.overview }}</p>
@@ -38,15 +30,13 @@
                     v-for="genreName in genreNames(movie.genre_ids)"
                     :key="genreName"
                     class="inline-block rounded-full px-1 mr-1 mb-1 text-xs tracking-wide break-word border bg-gray-400 sm:px-2 sm:py-1 sm:mr-2 sm:mb-2"
-                    >{{ genreName }}</span
-                >
+                >{{ genreName }}</span>
             </div>
             <div class="flex items-center justify-end">
                 <a
                     href="#"
                     class="inline-block mt-4 text-xs underline text-indigo-600 hover:text-indigo-400 transition-all"
-                    >More Info >></a
-                >
+                >More Info >></a>
             </div>
         </div>
     </div>
@@ -87,7 +77,7 @@ export default class MovieCard extends Vue {
         return genreObj;
     }
 
-    get scoreOfStarts(): number {
+    get scoreOfStars(): number {
         // Convert score format from max: 10 unit: 0.1 to max: 5 unit: 0.5
         // 2.3 -> 2 ; 2.6 -> 2.5
         return Math.floor(this.movie.vote_average) / 2;
