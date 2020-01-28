@@ -90,19 +90,88 @@ export interface IMovieDetail {
     vote_count: number;
 }
 
-interface IMovieSpokenlanguage {
+export interface IMovieSpokenlanguage {
     iso_639_1: string;
     name: string;
 }
 
-interface IMovieProductioncountry {
+export interface IMovieProductioncountry {
     iso_3166_1: string;
     name: string;
 }
 
-interface IMovieProductioncompany {
+export interface IMovieProductioncompany {
     id: number;
     logo_path?: string;
     name: string;
     origin_country: string;
+}
+
+export interface IMoviePoeple {
+    id: number;
+    cast: IMovieCast[];
+    crew: IMovieCrew[];
+}
+
+export interface IMovieCrew {
+    credit_id: string;
+    department: string;
+    gender: number;
+    id: number;
+    job: string;
+    name: string;
+    profile_path?: string;
+}
+
+export interface IMovieCast {
+    cast_id: number;
+    character: string;
+    credit_id: string;
+    gender: number;
+    id: number;
+    name: string;
+    order: number;
+    profile_path?: string;
+}
+
+export interface IMovieImage {
+    aspect_ratio: number;
+    file_path: string;
+    height: number;
+    iso_639_1?: string;
+    vote_average: number;
+    vote_count: number;
+    width: number;
+}
+
+export interface IMovieSimilar {
+    adult: boolean;
+    backdrop_path: string;
+    genre_ids: number[];
+    id: number;
+    original_language: string;
+    original_title: string;
+    overview: string;
+    poster_path: string;
+    release_date: string;
+    title: string;
+    video: boolean;
+    vote_average: number;
+    vote_count: number;
+    popularity: number;
+}
+
+export interface IMovieReviewResponse {
+    id: number;
+    page: number;
+    results: IMovieReview[];
+    total_pages: number;
+    total_results: number;
+}
+
+export interface IMovieReview {
+    author: string;
+    content: string;
+    id: string;
+    url: string;
 }

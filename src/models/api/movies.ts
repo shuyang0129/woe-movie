@@ -32,4 +32,24 @@ export default {
         const { data } = await axios(`/movie/${movieId}`);
         return data;
     },
+    // GET actors of movie
+    async getMoviePeople(movieId: number | string) {
+        const { data } = await axios(`/movie/${movieId}/credits`);
+        return data;
+    },
+    // GET images of movie
+    async getMovieImages(movieId: number | string) {
+        const { data } = await axios(`/movie/${movieId}/images`);
+        return data;
+    },
+    // GET similar movie
+    async getSimilarMovies(movieId: number | string) {
+        const { data } = await axios(`/movie/${movieId}/similar`);
+        return data;
+    },
+    // GET movie reviews
+    async getMovieReviews(movieId: number | string) {
+        const { data } = await axios(`/movie/${movieId}/reviews`);
+        return data;
+    },
 };
