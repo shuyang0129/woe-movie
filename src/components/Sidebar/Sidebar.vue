@@ -6,7 +6,9 @@
         >
             <div class="mx-auto max-w-lg flex flex-col">
                 <!-- Close -->
-                <CloseButton @handleClick="closeSidebar" />
+                <div class="ml-auto lg:hidden">
+                    <CloseButton @handleClick="closeSidebar" />
+                </div>
                 <!-- Keyword -->
                 <label class="block">
                     <span class="form-label">Filter with Keyword</span>

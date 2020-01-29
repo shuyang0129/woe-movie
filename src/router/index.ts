@@ -28,4 +28,15 @@ const router = new VueRouter({
     routes,
 });
 
+// router.beforeEach((to, from, next) => {
+//     console.log(to);
+//     console.log(from);
+//     if (from.name === to.name && from.params.movieId !== to.params.movieId) {
+//         // next(`/movies/${to.params.movieId}`);
+//         // location.reload();
+//         document.body.scrollTop = 0;
+//     }
+//     next();
+// });
+
 export default router;

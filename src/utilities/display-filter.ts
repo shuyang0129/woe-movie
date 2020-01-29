@@ -16,6 +16,6 @@ export const avatarWithInitials = (name: string): string => {
     return `https://ui-avatars.com/api/?rounded=true&name=${name}`;
 };
 
-export const tmdbImagePath = (size: string, filePath: string): string => {
+export const tmdbImagePath = (filePath: string, size: string): string => {
     return `https://image.tmdb.org/t/p/${size}${filePath}`;
 };

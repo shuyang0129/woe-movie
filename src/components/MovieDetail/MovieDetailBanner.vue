@@ -34,9 +34,7 @@
                 <div class="w-1/3 p-2">
                     <img
                         class="shadow rounded-sm"
-                        :src="
-                            `https://image.tmdb.org/t/p/w300/${movieDetail.poster_path}`
-                        "
+                        :src="movieDetail.poster_path | tmdbImagePath('w300')"
                     />
                 </div>
                 <div class="w-2/3 p-2">
@@ -60,9 +58,7 @@
         <!-- Screen Size | Small -->
         <div
             class="hidden sm:block bg-gray-700 p-10 md:px-0 bg-fixed bg-cover"
-            :style="
-                `background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('https://image.tmdb.org/t/p/w1280${movieDetail.backdrop_path}')`
-            "
+            :style="backgroundImageStyle"
         >
             <div class="w-full max-w-2xl mx-auto">
                 <div class="flex items-center -mx-2 py-4">
@@ -70,7 +66,7 @@
                         <img
                             class="shadow-xl rounded-sm"
                             :src="
-                                `https://image.tmdb.org/t/p/w300/${movieDetail.poster_path}`
+                                movieDetail.poster_path | tmdbImagePath('w300')
                             "
                         />
                     </div>
@@ -147,9 +143,16 @@ import {
     filters: {
         scoreOfStars,
         minToHour,
+        tmdbImagePath,
     },
 })
 export default class MovieDetailBanner extends Vue {
     @Prop() movieDetail!: Interface.IMovieDetail;
+
+    get backgroundImageStyle() {
+        const imgPath = this.movieDetail.backdrop_path;
+        const size = 'w1280';
+        return `background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('https://image.tmdb.org/t/p/${size}${this.movieDetail.backdrop_path}')`;
+    }
 }
 </script>

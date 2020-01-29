@@ -1,8 +1,10 @@
 <template>
     <div class="w-full h-full">
-        <img
+        <router-link
+            tag="img"
+            :to="`/movies/${similarMovie.id}`"
             class="w-full object-cover mx-1 rounded-sm shadow cursor-pointer"
-            :src="`https://image.tmdb.org/t/p/w300${similarMovie.poster_path}`"
+            :src="similarMovie.poster_path | tmdbImagePath('w300')"
             alt
         />
         <div class="flex flex-col items-center text-center my-2">
@@ -27,11 +29,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Provide, Prop } from 'vue-property-decorator';
+import { Component, Vue, Provide, Prop, Watch } from 'vue-property-decorator';
 import * as Interface from '@/models/interface/interface';
 import { Getter, Action } from 'vuex-class';
 import StarIcon from '@/components/StarIcon/StarIcon.vue';
-import { scoreOfStars } from '@/utilities/display-filter';
+import { scoreOfStars, tmdbImagePath } from '@/utilities/display-filter';
 
 @Component({
     components: {
@@ -39,10 +41,10 @@ import { scoreOfStars } from '@/utilities/display-filter';
     },
     filters: {
         scoreOfStars,
+        tmdbImagePath,
     },
 })
 export default class MovieDetailSimilar extends Vue {
     @Prop() similarMovie!: Interface.IMovieSimilar;
-    scoreOfStars: number = 10;
 }
 </script>

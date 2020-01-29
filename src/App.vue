@@ -14,16 +14,4 @@ import Header from '@/components/Header/Header.vue';
 })
 export default class App extends Vue {}
 </script>
-<style>
-html,
-body,
-#app {
-    @apply bg-gray-200;
-    width: 100%;
-    height: 100%;
-}
-
-[v-cloak] {
-    display: none !important;
-}
-</style>
+<style></style>

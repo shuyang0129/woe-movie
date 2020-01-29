@@ -1,7 +1,7 @@
 <template>
-    <button @click="handleClick" class="ml-auto lg:hidden">
+    <button @click="handleClick" class=" focus:outline-none">
         <svg
-            class="fill-current text-gray-400 hover:text-gray-200 w-5 h-5"
+            class="fill-current text-gray-100 hover:text-gray-200 w-5 h-5"
             viewBox="0 0 20 20"
         >
             <path

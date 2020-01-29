@@ -1,12 +1,18 @@
 <template>
-    <div class="overflow-x-hidden w-full mt-16 pb-6">
+    <div v-if="!isLoading" class="overflow-x-hidden w-full mt-16 pb-6">
+        <!-- Lightbox -->
+        <Lightbox
+            :isLightboxOpen="isLightboxOpen"
+            :movieImages="movieImages"
+            :selectedImage="selectedImage"
+            @closeLightbox="closeLightbox"
+        />
         <div class="fixed w-full h-56 z-20 sm:hidden">
             <div class="bg-gray-900 opacity-25 absolute inset-0"></div>
             <img
+                v-if="movieDetail.backdrop_path"
                 class="object-cover h-full w-full"
-                :src="
-                    `https://image.tmdb.org/t/p/w1280${movieDetail.backdrop_path}`
-                "
+                :src="movieDetail.backdrop_path | tmdbImagePath('w1280')"
             />
         </div>
         <!-- Banner -->
@@ -40,11 +46,15 @@
             <div class="flex items-center justify-between section-title">
                 <span class="text-gray-700">Images</span>
                 <a
+                    @click="openLightbox()"
                     class="text-indigo-500 hover:text-indigo-600 cursor-pointer transition-color"
                     >Show All</a
                 >
             </div>
-            <MovieDetailImageGrid :movieImages="movieImages" />
+            <MovieDetailImageGrid
+                :movieImages="movieImages"
+                @handleClick="openLightbox"
+            />
             <!-- Similar Movies -->
             <div class="flex items-center justify-between section-title">
                 <span class="text-gray-700">Similar Movies</span>
@@ -72,12 +82,15 @@
                     :key="movieReview.id"
                 />
             </div>
+            <p class="text-xs italic text-gray-500 text-center">
+                The End Of The Page
+            </p>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Provide } from 'vue-property-decorator';
+import { Component, Vue, Provide, Watch } from 'vue-property-decorator';
 import * as Interface from '@/models/interface/interface';
 import { Getter, Action } from 'vuex-class';
 import tmdbApi from '@/models/api/movies';
@@ -87,6 +100,8 @@ import MovieDetailPeople from '@/components/MovieDetail/MovieDetailPeople.vue';
 import MovieDetailReview from '@/components/MovieDetail/MovieDetailReview.vue';
 import MovieDetailSimilar from '@/components/MovieDetail/MovieDetailSimilar.vue';
 import SectionTitle from '@/components/SectionTitle/SectionTitle.vue';
+import Lightbox from '@/views/Lightbox.vue';
+import { tmdbImagePath } from '@/utilities/display-filter';
 
 @Component({
     components: {
@@ -96,20 +111,44 @@ import SectionTitle from '@/components/SectionTitle/SectionTitle.vue';
         MovieDetailReview,
         MovieDetailSimilar,
         SectionTitle,
+        Lightbox,
+    },
+    filters: {
+        tmdbImagePath,
     },
 })
 export default class MovieDetail extends Vue {
     movieId: string = '';
-    movieDetail: Interface.IMovieDetail = <Interface.IMovieDetail>{};
+
+    movieDetail = {} as Interface.IMovieDetail;
     movieCasts: Interface.IMovieCast[] = [];
-    displayMovieCasts: Interface.IMovieCast[] = [];
+    displayMovieCasts: Interface.IMovieCast[] = []; // Restrict the number of cast display on screen
     movieImages: Interface.IMovieImage[] = [];
     similarMovies: Interface.IMovieSimilar[] = [];
     movieReviews: Interface.IMovieReview[] = [];
+
     currentReviewPage: number = 0;
+    isLoading: boolean = true;
+    isLightboxOpen: boolean = false;
+    selectedImage = {} as Interface.IMovieImage;
 
     expandCast() {
         this.displayMovieCasts = this.movieCasts;
+    }
+
+    @Watch('$route', { immediate: false, deep: true })
+    reloadPage() {
+        location.reload();
+        window.scrollTo(0, 0);
+    }
+
+    openLightbox(img?: Interface.IMovieImage) {
+        this.selectedImage = img ? img : this.movieImages[0];
+        this.isLightboxOpen = true;
+    }
+
+    closeLightbox() {
+        this.isLightboxOpen = false;
     }
 
     async created() {
@@ -117,44 +156,32 @@ export default class MovieDetail extends Vue {
         this.movieId = this.$route.params.movieId;
         // If movie is invalid
 
-        // GET movie detail
-        const getMovieDetail = tmdbApi.getMovieDetail(this.movieId);
-        const getMovieImages = tmdbApi.getMovieImages(this.movieId);
-        const getMovieReviews = tmdbApi.getMovieReviews(this.movieId);
-        const getSimilarMovies = tmdbApi.getSimilarMovies(this.movieId);
-        const getMoviePeople = tmdbApi.getMoviePeople(this.movieId);
+        // GET movie data
+        this.isLoading = true;
 
-        await Promise.all([
-            getMovieDetail,
-            getMovieImages,
-            getMovieReviews,
-            getSimilarMovies,
-            getMoviePeople,
+        const [
+            getMovieDetail, // 1) Movie detail
+            getMovieImages, // 2) Movie image
+            getMovieReviews, // 3) Movie review
+            getSimilarMovies, // 4) Similar movie
+            getMoviePeople, // 5) Movie people
+        ] = await Promise.all([
+            tmdbApi.getMovieDetail(this.movieId), // 1)
+            tmdbApi.getMovieImages(this.movieId), // 2)
+            tmdbApi.getMovieReviews(this.movieId), // 3)
+            tmdbApi.getSimilarMovies(this.movieId), // 4)
+            tmdbApi.getMoviePeople(this.movieId), // 5)
         ]);
 
-        this.movieDetail = await getMovieDetail;
-        this.movieImages = (await getMovieImages).backdrops;
-        this.movieReviews = (await getMovieReviews).results;
-        this.similarMovies = (await getSimilarMovies).results;
-        this.movieCasts = (await getMoviePeople).cast;
+        this.movieDetail = getMovieDetail;
+        this.movieImages = getMovieImages.backdrops;
+        this.selectedImage = this.movieImages[0];
+        this.movieReviews = getMovieReviews.results;
+        this.similarMovies = getSimilarMovies.results;
+        this.movieCasts = getMoviePeople.cast;
         this.displayMovieCasts = this.movieCasts.slice(0, 6);
+
+        this.isLoading = false;
     }
 }
 </script>
-<style scoped>
-.customize-scroll::-webkit-scrollbar {
-    @apply h-1 bg-gray-300;
-}
-.customize-scroll::-webkit-scrollbar-track {
-    /* background: #f1f1f1; */
-    @apply bg-gray-300;
-}
-
-.customize-scroll::-webkit-scrollbar-thumb {
-    @apply bg-gray-500 rounded-full transition-bg;
-}
-
-.customize-scroll::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-500;
-}
-</style>
