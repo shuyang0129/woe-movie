@@ -48,8 +48,10 @@ export default {
         return data;
     },
     // GET movie reviews
-    async getMovieReviews(movieId: number | string) {
-        const { data } = await axios(`/movie/${movieId}/reviews`);
+    async getMovieReviews(movieId: number | string, params = {}) {
+        const { data } = await axios(`/movie/${movieId}/reviews`, {
+            params,
+        });
         return data;
     },
     // GET movie videos

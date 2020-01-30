@@ -34,7 +34,7 @@
                                 v-if="currentPage === totalPages"
                                 class="text-xs italic text-gray-500 text-center my-4"
                             >
-                                The End Of The Page
+                                The End Of The Results
                             </p>
                         </div>
                     </div>
