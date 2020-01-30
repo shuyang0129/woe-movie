@@ -5,8 +5,13 @@
             <div class="relative mt-16 pb-20 max-w-6xl mx-auto">
                 <div class="w-full lg:flex lg:items-start pt-6">
                     <div class="w-full h-full lg:w-4/6 md:px-12 lg:px-6">
-                        <ScrollTopButton :isScrollTopShow="isScrollTopShow" @scrollTop="scrollTop" />
-                        <div class="flex items-baseline justify-between px-6 lg:px-0">
+                        <ScrollTopButton
+                            :isScrollTopShow="isScrollTopShow"
+                            @scrollTop="scrollTop"
+                        />
+                        <div
+                            class="flex items-baseline justify-between px-6 lg:px-0"
+                        >
                             <p class="text-sm text-gray-600 py-2">
                                 Total Results:
                                 {{ isLoading ? '' : totalResults }}
@@ -16,13 +21,14 @@
                         <p
                             v-if="totalResults === 0 && !isLoading"
                             class="text-base p-6 italic"
-                        >No results</p>
+                        >
+                            No results
+                        </p>
                         <div v-else class="relative">
                             <MovieCard
                                 v-for="movie in movies"
                                 :key="movie.id"
                                 :movie="movie"
-                                :genres="genres"
                             />
                         </div>
                     </div>

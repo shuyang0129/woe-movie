@@ -18,7 +18,7 @@ import { Getter, Action } from 'vuex-class';
 @Component({
     components: {},
 })
-export default class Home extends Vue {
+export default class SectionTitle extends Vue {
     @Prop({ default: '' }) title!: string;
     @Prop({ default: '' }) btnName!: string;
     @Prop({ default: false }) isShowBtn!: boolean;

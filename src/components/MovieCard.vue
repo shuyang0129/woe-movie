@@ -1,5 +1,7 @@
 <template>
-    <div class="flex items-start py-6 pr-6 ml-6 border-b border-gray-400 lg:pr-0 lg:ml-0">
+    <div
+        class="flex items-start py-6 pr-6 ml-6 border-b border-gray-400 lg:pr-0 lg:ml-0"
+    >
         <!-- Poster -->
         <img
             v-if="movie.poster_path"
@@ -9,19 +11,25 @@
         />
         <div class="pl-6">
             <div class="flex items-center">
-                <h4 class="font-semibold text-lg text-gray-700">{{ movie.title }}</h4>
+                <h4 class="font-semibold text-lg text-gray-700">
+                    {{ movie.title }}
+                </h4>
                 <span
                     class="ml-2 text-xs font-semibold text-gray-500 uppercase tracking-wide"
-                >{{ movie.original_language }}</span>
+                    >{{ movie.original_language }}</span
+                >
             </div>
             <div class="flex items-center sm:mt-1">
-                <StarIcon :scoreOfStars="scoreOfStars" :color="'text-yellow-600'" />
+                <StarIcon
+                    :scoreOfStars="scoreOfStars"
+                    :color="'text-yellow-600'"
+                />
                 <span class="text-xs font-semibold ml-2">
                     {{ scoreOfStars }}
                     ({{ movie.vote_count }})
-                    <span
-                        class="text-xs font-semibold hidden sm:inline-block"
-                    >&bull; {{ movie.release_date }}</span>
+                    <span class="text-xs font-semibold hidden sm:inline-block"
+                        >&bull; {{ movie.release_date }}</span
+                    >
                 </span>
             </div>
             <p class="hidden sm:block text-sm mt-4">{{ movie.overview }}</p>
@@ -30,13 +38,15 @@
                     v-for="genreName in genreNames(movie.genre_ids)"
                     :key="genreName"
                     class="inline-block rounded-full px-1 mr-1 mb-1 text-xs tracking-wide break-word border bg-gray-400 sm:px-2 sm:py-1 sm:mr-2 sm:mb-2"
-                >{{ genreName }}</span>
+                    >{{ genreName }}</span
+                >
             </div>
             <div class="flex items-center justify-end">
                 <a
                     href="#"
                     class="inline-block mt-4 text-xs underline text-indigo-600 hover:text-indigo-400 transition-all"
-                >More Info >></a>
+                    >More Info >></a
+                >
             </div>
         </div>
     </div>
@@ -44,6 +54,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Getter } from 'vuex-class';
 import StarIcon from './StarIcon/StarIcon.vue';
 import * as Interface from '@/models/interface/interface';
 
@@ -54,27 +65,15 @@ import * as Interface from '@/models/interface/interface';
 })
 export default class MovieCard extends Vue {
     @Prop({ default: {} }) readonly movie!: Interface.IMovies;
-    @Prop({ default: [] }) readonly genres!: Interface.IGenre[];
+    @Getter('movieGenres/getGenreObj')
+    private getGenreObj!: Interface.IGenreObj;
 
     // Loop ids of movie genres and search with id of genre
     genreNames(ids: number[]) {
         // Convert array of genre_ids to genre_names
         return ids.map((id: number) => {
-            if (this.genreObj[id]) return this.genreObj[id].name;
+            if (this.getGenreObj[id]) return this.getGenreObj[id].name;
         });
-    }
-
-    // Convert response genres object to id indexes
-    get genreObj() {
-        const genreObj: Interface.IGenreObj = {};
-
-        // Create a object with genre_ids as keys
-        this.genres.forEach((genre: Interface.IGenre) => {
-            const { id, name } = genre;
-            genreObj[id] = { name }; // ex "28": { name: "Action" }
-        });
-
-        return genreObj;
     }
 
     get scoreOfStars(): number {

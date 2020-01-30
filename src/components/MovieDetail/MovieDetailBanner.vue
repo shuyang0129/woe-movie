@@ -106,10 +106,10 @@
                             {{ movieDetail.overview }}
                         </p>
                         <span
-                            v-for="i in 3"
-                            :key="i"
+                            v-for="genre in movieDetail.genres"
+                            :key="genre.id"
                             class="inline-block rounded-full px-1 mr-1 mb-1 text-xs tracking-wide break-word border border-gray-400 sm:px-2 sm:py-1 sm:mr-2 sm:mb-2 text-gray-400"
-                            >Crime</span
+                            >{{ genre.name }}</span
                         >
                         <a
                             class="inline-block text-center w-full btn btn-indigo-3d rounded mt-4"
