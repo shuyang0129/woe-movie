@@ -51,6 +51,7 @@
                 <a
                     class="inline-block text-center w-full btn btn-indigo-3d rounded"
                     :href="movieDetail.homepage"
+                    target="_blank"
                     >OFFICIAL WEBSITE</a
                 >
             </div>
@@ -114,6 +115,7 @@
                         <a
                             class="inline-block text-center w-full btn btn-indigo-3d rounded mt-4"
                             :href="movieDetail.homepage"
+                            target="_blank"
                             >OFFICIAL WEBSITE</a
                         >
                     </div>
