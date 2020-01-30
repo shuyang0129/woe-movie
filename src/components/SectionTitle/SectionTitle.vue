@@ -5,7 +5,8 @@
             v-if="isShowBtn"
             @click="handleClick"
             class="text-indigo-500 hover:text-indigo-600 cursor-pointer transition-color"
-        >{{ btnName }}</a>
+            >{{ btnName }}</a
+        >
     </div>
 </template>
 

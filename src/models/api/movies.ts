@@ -52,4 +52,9 @@ export default {
         const { data } = await axios(`/movie/${movieId}/reviews`);
         return data;
     },
+    // GET movie videos
+    async getMovieVideos(movieId: number | string) {
+        const { data } = await axios(`/movie/${movieId}/videos`);
+        return data;
+    },
 };

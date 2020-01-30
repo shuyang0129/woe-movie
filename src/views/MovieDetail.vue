@@ -27,12 +27,6 @@
                 :btnName="'Show All'"
                 @handleClick="expandCast"
             />
-            <!-- <div class="flex items-center justify-between section-title">
-                <span class="text-gray-700">Actors/Actress</span>
-                <a
-                    class="text-indigo-500 hover:text-indigo-600 cursor-pointer transition-color"
-                >Show All</a>
-            </div>-->
             <div class="flex flex-wrap sm:-m-2">
                 <div
                     v-for="(movieCast, i) in displayMovieCasts"
@@ -43,22 +37,33 @@
                 </div>
             </div>
             <!-- Images -->
-            <div class="flex items-center justify-between section-title">
-                <span class="text-gray-700">Images</span>
-                <a
-                    @click="openLightbox()"
-                    class="text-indigo-500 hover:text-indigo-600 cursor-pointer transition-color"
-                    >Show All</a
-                >
-            </div>
+            <SectionTitle
+                :title="'Images'"
+                :isShowBtn="true"
+                :btnName="'Show All'"
+                @handleClick="openLightbox()"
+            />
             <MovieDetailImageGrid
                 :movieImages="movieImages"
                 @handleClick="openLightbox"
             />
-            <!-- Similar Movies -->
-            <div class="flex items-center justify-between section-title">
-                <span class="text-gray-700">Similar Movies</span>
+            <!-- Trailer Video -->
+            <SectionTitle :title="'Trailer'" :isShowBtn="false" />
+            <div
+                v-if="!isLoading"
+                class="w-full relative"
+                style="padding-top: 56.25%"
+            >
+                <iframe
+                    class="absolute inset-0 w-full h-full"
+                    :src="`https://www.youtube.com/embed/${movieVidoes[0].key}`"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                ></iframe>
             </div>
+            <!-- Similar Movies -->
+            <SectionTitle :title="'Similar Movies'" :isShowBtn="false" />
             <div
                 class="flex items-start overflow-x-scroll customize-scroll py-2"
             >
@@ -80,6 +85,7 @@
                     v-for="movieReview in movieReviews"
                     :movieReview="movieReview"
                     :key="movieReview.id"
+                    :refName="movieReview.id"
                 />
             </div>
             <p class="text-xs italic text-gray-500 text-center">
@@ -126,6 +132,7 @@ export default class MovieDetail extends Vue {
     movieImages: Interface.IMovieImage[] = [];
     similarMovies: Interface.IMovieSimilar[] = [];
     movieReviews: Interface.IMovieReview[] = [];
+    movieVidoes: Interface.IMovieVideo[] = [];
 
     currentReviewPage: number = 0;
     isLoading: boolean = true;
@@ -151,6 +158,8 @@ export default class MovieDetail extends Vue {
         this.isLightboxOpen = false;
     }
 
+    requestApi() {}
+
     async created() {
         // Get movie id from route
         this.movieId = this.$route.params.movieId;
@@ -165,12 +174,14 @@ export default class MovieDetail extends Vue {
             getMovieReviews, // 3) Movie review
             getSimilarMovies, // 4) Similar movie
             getMoviePeople, // 5) Movie people
+            getMovieVideos, // 6) Movie video
         ] = await Promise.all([
             tmdbApi.getMovieDetail(this.movieId), // 1)
             tmdbApi.getMovieImages(this.movieId), // 2)
             tmdbApi.getMovieReviews(this.movieId), // 3)
             tmdbApi.getSimilarMovies(this.movieId), // 4)
             tmdbApi.getMoviePeople(this.movieId), // 5)
+            tmdbApi.getMovieVideos(this.movieId), // 6)
         ]);
 
         this.movieDetail = getMovieDetail;
@@ -180,6 +191,10 @@ export default class MovieDetail extends Vue {
         this.similarMovies = getSimilarMovies.results;
         this.movieCasts = getMoviePeople.cast;
         this.displayMovieCasts = this.movieCasts.slice(0, 6);
+        this.movieVidoes = getMovieVideos.results.filter(
+            (video: Interface.IMovieVideo) =>
+                video.site === 'YouTube' && video.type === 'Trailer'
+        );
 
         this.isLoading = false;
     }
