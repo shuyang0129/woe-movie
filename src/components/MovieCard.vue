@@ -42,10 +42,10 @@
                 >
             </div>
             <div class="flex items-center justify-end">
-                <a
-                    href="#"
+                <router-link
+                    :to="`/movies/${movie.id}`"
                     class="inline-block mt-4 text-xs underline text-indigo-600 hover:text-indigo-400 transition-all"
-                    >More Info >></a
+                    >More Info >></router-link
                 >
             </div>
         </div>

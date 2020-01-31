@@ -39,19 +39,25 @@
                 </div>
                 <!-- Images -->
                 <SectionTitle
+                    v-if="movieImages.length > 0"
                     :title="'Images'"
                     :isShowBtn="true"
                     :btnName="'Show All'"
                     @handleClick="openLightbox()"
                 />
                 <MovieDetailImageGrid
+                    v-if="movieImages.length > 0"
                     :movieImages="movieImages"
                     @handleClick="openLightbox"
                 />
                 <!-- Trailer Video -->
-                <SectionTitle :title="'Trailer'" :isShowBtn="false" />
+                <SectionTitle
+                    v-if="movieVidoes.lenght > 0"
+                    :title="'Trailer'"
+                    :isShowBtn="false"
+                />
                 <div
-                    v-if="!isLoading"
+                    v-if="!isLoading && movieVidoes.lenght > 0"
                     class="w-full relative"
                     style="padding-top: 56.25%"
                 >
@@ -80,10 +86,10 @@
                     </div>
                 </div>
                 <!-- Reviews -->
-                <div class="section-title">
+                <div v-if="movieReviews.length > 0" class="section-title">
                     <span class="text-gray-700">Reviews</span>
                 </div>
-                <div class="py-2">
+                <div v-if="movieReviews.length > 0" class="py-2">
                     <MovieDetailReview
                         v-for="movieReview in movieReviews"
                         :movieReview="movieReview"

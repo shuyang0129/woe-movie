@@ -11,20 +11,20 @@
                 class="px-4 py-4 sm:flex sm:items-center sm:justify-end sm:max-h-full sm:py-4 overflow-hidden transition-all"
                 :class="isMenuOpen ? 'block' : 'hidden'"
             >
-                <a
-                    href="#"
+                <router-link
+                    to="/"
                     class="block text-sm text-gray-600 hover:bg-indigo-100 rounded p-2 sm:inline-block md:ml-8 transition-all"
-                    >Home</a
+                    >Home</router-link
                 >
-                <a
-                    href="#"
+                <router-link
+                    to="/movies"
                     class="block text-sm text-gray-600 hover:bg-indigo-100 rounded p-2 sm:inline-block md:ml-8 transition-all"
-                    >Movie</a
+                    >Movie</router-link
                 >
-                <a
-                    href="#"
+                <router-link
+                    to="/"
                     class="block text-sm text-gray-600 hover:bg-indigo-100 rounded p-2 sm:inline-block md:ml-8 transition-all"
-                    >About</a
+                    >About</router-link
                 >
             </nav>
         </div>
