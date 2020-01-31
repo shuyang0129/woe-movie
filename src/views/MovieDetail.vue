@@ -52,12 +52,12 @@
                 />
                 <!-- Trailer Video -->
                 <SectionTitle
-                    v-if="movieVidoes.lenght > 0"
+                    v-if="movieVidoes.length > 0"
                     :title="'Trailer'"
                     :isShowBtn="false"
                 />
                 <div
-                    v-if="!isLoading && movieVidoes.lenght > 0"
+                    v-if="!isLoading && movieVidoes.length > 0"
                     class="w-full relative"
                     style="padding-top: 56.25%"
                 >
@@ -96,13 +96,13 @@
                         :key="movieReview.id"
                         :refName="movieReview.id"
                     />
-                    <p
-                        v-if="currentReviewPage === totalReviewPage"
-                        class="text-xs italic text-gray-500 text-center"
-                    >
-                        The End Of The Results
-                    </p>
                 </div>
+                <p
+                    v-if="currentReviewPage === totalReviewPage"
+                    class="text-xs italic text-gray-500 text-center mt-8 mb-4"
+                >
+                    The End Of The Page
+                </p>
             </div>
         </div>
     </div>

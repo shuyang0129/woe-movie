@@ -40,10 +40,10 @@
                 <div class="w-2/3 p-2">
                     <p class="text-xs mb-2">{{ movieDetail.overview }}</p>
                     <span
-                        v-for="i in 3"
-                        :key="i"
+                        v-for="genre in movieDetail.genres"
+                        :key="genre.id"
                         class="inline-block rounded-full px-1 mr-1 mb-1 text-xs tracking-wide break-word border bg-gray-400 sm:px-2 sm:py-1 sm:mr-2 sm:mb-2"
-                        >Crime</span
+                        >{{ genre.name }}</span
                     >
                 </div>
             </div>

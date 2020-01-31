@@ -30,13 +30,13 @@
                                 :key="movie.id"
                                 :movie="movie"
                             />
-                            <p
-                                v-if="currentPage === totalPages"
-                                class="text-xs italic text-gray-500 text-center my-4"
-                            >
-                                The End Of The Results
-                            </p>
                         </div>
+                        <p
+                            v-if="currentPage === totalPages"
+                            class="text-xs italic text-gray-500 text-center my-4"
+                        >
+                            The End Of The Results
+                        </p>
                     </div>
                     <div class="lg:block lg:w-2/6 lg:px-6">
                         <Sidebar
