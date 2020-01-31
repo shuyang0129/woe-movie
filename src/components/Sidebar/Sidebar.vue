@@ -51,6 +51,16 @@
                         <span class="ml-2">{{ sortOpt.name }}</span>
                     </label>
                 </div>
+                <!-- Rating Count | Greater & Equal -->
+                <label class="block">
+                    <span class="form-label">Filter with Rating Count</span>
+                    <input
+                        v-model.number="ratingCount"
+                        @input="checkNumberOnly"
+                        class="form-input w-full"
+                        placeholder="Greater and equal"
+                    />
+                </label>
                 <!-- Release Year -->
                 <span class="form-label">Release Year</span>
                 <label class="block">
@@ -110,7 +120,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Inject } from 'vue-property-decorator';
+import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
 import { Action, Mutation, Getter } from 'vuex-class';
 import tmdbApi from '@/models/api/movies';
 import { QueryKey } from '@/models/enum/enum';
@@ -147,6 +157,7 @@ export default class SideBar extends Vue {
     ];
 
     keywords: string = '';
+    ratingCount: string = '';
     selectedGenreIds: string[] = []; // IDs of selected genres
     originalLanguage: string = ''; // Orginal language of movie
     sortBy: string = this.sortOpts[0].value;
@@ -159,6 +170,10 @@ export default class SideBar extends Vue {
 
     get langNames() {
         return ISO6391.getAllNames().sort(); // [English, Japanese, ...]
+    }
+
+    checkNumberOnly(e: any) {
+        this.ratingCount = e.target.value.replace(/[^0-9]+/g, '');
     }
 
     getLangCode(langName: string): string {
