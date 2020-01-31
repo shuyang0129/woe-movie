@@ -1,6 +1,6 @@
 <template>
     <div
-        class="flex items-start py-6 pr-6 ml-6 border-b border-gray-400 lg:pr-0 lg:ml-0"
+        class="flex items-start w-full py-6 pr-6 ml-6 border-b border-gray-400 lg:pr-0 lg:ml-0"
     >
         <!-- Poster -->
         <img
@@ -9,7 +9,7 @@
             :src="`https://image.tmdb.org/t/p/w185/${movie.poster_path}`"
             alt="movie poster"
         />
-        <div class="pl-6">
+        <div class="px-6 lg:pr-0 flex-grow">
             <div class="flex items-center">
                 <h4 class="font-semibold text-lg text-gray-700">
                     {{ movie.title }}
