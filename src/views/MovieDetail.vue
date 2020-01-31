@@ -73,18 +73,7 @@
                 </div>
                 <!-- Similar Movies -->
                 <SectionTitle :title="'Similar Movies'" :isShowBtn="false" />
-                <div
-                    class="flex items-start overflow-x-scroll customize-scroll py-2"
-                >
-                    <div
-                        v-for="similarMovie in similarMovies"
-                        :key="similarMovie.id"
-                    >
-                        <div class="w-24 sm:w-32 mr-2 sm:mr-4">
-                            <MovieDetailSimilar :similarMovie="similarMovie" />
-                        </div>
-                    </div>
-                </div>
+                <MovieCardSimpleList :movies="similarMovies" />
                 <!-- Reviews -->
                 <div v-if="movieReviews.length > 0" class="section-title">
                     <span class="text-gray-700">Reviews</span>
@@ -117,7 +106,7 @@ import MovieDetailBanner from '@/components/MovieDetail/MovieDetailBanner.vue';
 import MovieDetailImageGrid from '@/components/MovieDetail/MovieDetailImageGrid.vue';
 import MovieDetailPeople from '@/components/MovieDetail/MovieDetailPeople.vue';
 import MovieDetailReview from '@/components/MovieDetail/MovieDetailReview.vue';
-import MovieDetailSimilar from '@/components/MovieDetail/MovieDetailSimilar.vue';
+import MovieCardSimpleList from '@/components/MovieCard/MovieCardSimpleList.vue';
 import SectionTitle from '@/components/SectionTitle/SectionTitle.vue';
 import Lightbox from '@/views/Lightbox.vue';
 import { tmdbImagePath } from '@/utilities/display-filter';
@@ -128,7 +117,7 @@ import { tmdbImagePath } from '@/utilities/display-filter';
         MovieDetailImageGrid,
         MovieDetailPeople,
         MovieDetailReview,
-        MovieDetailSimilar,
+        MovieCardSimpleList,
         SectionTitle,
         Lightbox,
     },

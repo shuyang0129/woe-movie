@@ -59,7 +59,7 @@ import * as Interface from '@/models/interface/interface';
 import { QueryKey } from '@/models/enum/enum';
 import { Getter, Action } from 'vuex-class';
 import tmdbApi from '@/models/api/movies';
-import MovieCard from '@/components/MovieCard.vue';
+import MovieCard from '@/components/MovieCard/MovieCard.vue';
 import Header from '@/components/Header/Header.vue';
 import Sidebar from '@/components/Sidebar/Sidebar.vue';
 import SidebarButton from '@/components/SidebarButton/SidebarButton.vue';

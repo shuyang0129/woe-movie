@@ -55,7 +55,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
-import StarIcon from './StarIcon/StarIcon.vue';
+import StarIcon from '@/components/StarIcon/StarIcon.vue';
 import * as Interface from '@/models/interface/interface';
 
 @Component({

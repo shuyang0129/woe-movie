@@ -2,25 +2,25 @@
     <div class="w-full h-full">
         <router-link
             tag="img"
-            :to="`/movies/${similarMovie.id}`"
+            :to="`/movies/${movie.id}`"
             class="w-full object-cover mx-1 rounded-sm shadow cursor-pointer"
-            :src="similarMovie.poster_path | tmdbImagePath('w300')"
+            :src="movie.poster_path | tmdbImagePath('w300')"
             alt
         />
         <div class="flex flex-col items-center text-center my-2">
             <h4
                 class="text-gray-700 font-semibold sm:font-bold text-xs break-words"
             >
-                {{ similarMovie.title }}
+                {{ movie.title }}
             </h4>
             <div class="flex flex-col items-center mt-1 hidden sm:block">
                 <StarIcon
-                    :scoreOfStars="similarMovie.vote_average | scoreOfStars"
+                    :scoreOfStars="movie.vote_average | scoreOfStars"
                     :color="'text-yellow-600'"
                 />
                 <span class="text-xs font-semibold"
-                    >{{ similarMovie.vote_average | scoreOfStars }} ({{
-                        similarMovie.vote_count
+                    >{{ movie.vote_average | scoreOfStars }} ({{
+                        movie.vote_count
                     }})</span
                 >
             </div>
@@ -45,6 +45,6 @@ import { scoreOfStars, tmdbImagePath } from '@/utilities/display-filter';
     },
 })
 export default class MovieDetailSimilar extends Vue {
-    @Prop() similarMovie!: Interface.IMovieSimilar;
+    @Prop() movie!: Interface.IMovieSimilar;
 }
 </script>
