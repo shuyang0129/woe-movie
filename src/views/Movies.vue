@@ -1,13 +1,10 @@
 <template>
-    <div class="overflow-y-scroll scrolling-touch" ref="movie-list">
+    <div class="scrolling-touch" ref="movie-list">
         <!-- <Header /> -->
         <div class="relative mt-16 pb-20 max-w-6xl mx-auto">
             <div class="w-full lg:flex lg:items-start pt-6">
                 <div class="w-full h-full lg:w-4/6 md:px-12 lg:px-6">
-                    <ScrollTopButton
-                        :isScrollTopShow="isScrollTopShow"
-                        @scrollTop="scrollTop"
-                    />
+                    <ScrollTopButton />
                     <div
                         class="flex items-baseline justify-between px-6 lg:px-0"
                     >
@@ -80,7 +77,6 @@ export default class Movies extends Vue {
     currentPage: number = 1; // current page of AIP response
     genres: Interface.IGenre[] = []; // genres list of movies
     isLoading: boolean = false;
-    isScrollTopShow: boolean = false;
 
     @Getter('movieQuery/getQuery') private getQuery!: Interface.IMovieQeury;
     @Action('movieQuery/setQuery') private setQuery!: any;
@@ -95,16 +91,23 @@ export default class Movies extends Vue {
 
     async getAndUpdateMovies() {
         this.isLoading = true;
+
         // Get movieQuery from Vuex
         const query = this.getQuery;
+
         // GET request for TMDB movies
         const data: Interface.IMoviesResponse = await tmdbApi.getMovies(query);
+
+        // Remove the movies without poster
         data.results = data.results.filter(movie => movie.poster_path);
+
         // UPDATE data
         this.movies =
+            // if page increase, concat the data
             query.page > 1 && query.page > this.currentPage
                 ? this.movies.concat(data.results)
                 : data.results;
+
         this.totalResults = data.total_results;
         this.totalPages = data.total_pages;
         this.currentPage = data.page;
@@ -123,10 +126,8 @@ export default class Movies extends Vue {
     }
 
     scrollLoad(): void {
-        const movieContainer = this.$refs['movie-list'] as HTMLElement;
-        if (!movieContainer) return;
-
-        movieContainer.addEventListener('scroll', () => {
+        window.addEventListener('scroll', () => {
+            const movieContainer = document.documentElement as HTMLElement;
             const query = this.getQuery;
             // REACH BOTTOM: scrollTop + clientHeight = scrollHeight
             const bottomOfWindow =
@@ -142,21 +143,8 @@ export default class Movies extends Vue {
         });
     }
 
-    showScrollTopButton(): void {
-        const movieContainer = this.$refs['movie-list'] as HTMLElement;
-        if (!movieContainer) return;
-
-        movieContainer.addEventListener('scroll', () => {
-            this.isScrollTopShow =
-                movieContainer.scrollTop > 900 ? true : false;
-        });
-    }
-
     scrollTop() {
-        const movieContainer = this.$refs['movie-list'] as HTMLElement;
-        if (!movieContainer) return;
-
-        TweenMax.to(movieContainer, 0.5, {
+        TweenMax.to(document.documentElement, 0.5, {
             scrollTop: 0,
             ease: Power3.easeInOut,
         });
@@ -182,17 +170,11 @@ export default class Movies extends Vue {
 
         // Scroll loading movies
         this.scrollLoad();
-
-        // Show scroll top button
-        this.showScrollTopButton();
     }
 
     beforeDestroy() {
-        const movieContainer = this.$refs['movie-list'] as HTMLElement;
-
         window.removeEventListener('resize', this.onResize);
-        movieContainer.removeEventListener('scroll', this.scrollLoad);
-        movieContainer.removeEventListener('scroll', this.showScrollTopButton);
+        window.removeEventListener('scroll', this.scrollLoad);
     }
 }
 </script>

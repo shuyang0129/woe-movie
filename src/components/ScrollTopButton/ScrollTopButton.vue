@@ -14,15 +14,33 @@
 </template>
 
 <script lang="ts">
+import { TweenMax, Power3 } from 'gsap';
 import { Component, Vue, Watch, Prop } from 'vue-property-decorator';
 
 @Component({
     components: {},
-    props: ['isScrollTopShow'],
 })
 export default class ScrollTopButton extends Vue {
+    isScrollTopShow: boolean = false;
+
     scrollTop() {
-        this.$emit('scrollTop');
+        TweenMax.to(document.documentElement, 0.5, {
+            scrollTop: 0,
+            ease: Power3.easeInOut,
+        });
+    }
+
+    showScrollTop() {
+        this.isScrollTopShow =
+            document.documentElement.scrollTop > 90 ? true : false;
+    }
+
+    created() {
+        window.addEventListener('scroll', this.showScrollTop);
+    }
+
+    beforeDestroy() {
+        window.removeEventListener('scroll', this.showScrollTop);
     }
 }
 </script>

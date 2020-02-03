@@ -1,6 +1,8 @@
 <template>
-    <div class="h-full overflow-y-scroll scrolling-touch" ref="movie-detail">
+    <div class="scrolling-touch" ref="movie-detail">
         <div v-if="!isLoading" class="overflow-x-hidden w-full mt-16 pb-6">
+            <!-- Scroll Top Button -->
+            <ScrollTopButton />
             <!-- Lightbox -->
             <Lightbox
                 :isLightboxOpen="isLightboxOpen"
@@ -107,6 +109,7 @@ import MovieDetailImageGrid from '@/components/MovieDetail/MovieDetailImageGrid.
 import MovieDetailPeople from '@/components/MovieDetail/MovieDetailPeople.vue';
 import MovieDetailReview from '@/components/MovieDetail/MovieDetailReview.vue';
 import MovieCardSimpleList from '@/components/MovieCard/MovieCardSimpleList.vue';
+import ScrollTopButton from '@/components/ScrollTopButton/ScrollTopButton.vue';
 import SectionTitle from '@/components/SectionTitle/SectionTitle.vue';
 import Lightbox from '@/views/Lightbox.vue';
 import { tmdbImagePath } from '@/utilities/display-filter';
@@ -118,6 +121,7 @@ import { tmdbImagePath } from '@/utilities/display-filter';
         MovieDetailPeople,
         MovieDetailReview,
         MovieCardSimpleList,
+        ScrollTopButton,
         SectionTitle,
         Lightbox,
     },
@@ -182,7 +186,7 @@ export default class MovieDetail extends Vue {
         };
     }
 
-    async getApiReq() {
+    async getDataAndUpdate() {
         const [
             getMovieDetail, // 1) Movie detail
             getMovieImages, // 2) Movie image
@@ -217,32 +221,25 @@ export default class MovieDetail extends Vue {
     async created() {
         // Get movie id from route
         this.movieId = this.$route.params.movieId;
-        // If movie is invalid
 
         // GET movie data
         this.isLoading = true;
 
-        await this.getApiReq();
+        await this.getDataAndUpdate();
 
         this.isLoading = false;
 
-        const movieDetailContainer = this.$refs['movie-detail'] as HTMLElement;
-        if (movieDetailContainer) {
-            movieDetailContainer.addEventListener(
-                'scroll',
-                this.scrollLoad(movieDetailContainer)
-            );
-        }
+        window.addEventListener(
+            'scroll',
+            this.scrollLoad(document.documentElement)
+        );
     }
 
     beforeDestroy() {
-        const movieDetailContainer = this.$refs['movie-detail'] as HTMLElement;
-        if (movieDetailContainer) {
-            movieDetailContainer.removeEventListener(
-                'scroll',
-                this.scrollLoad(movieDetailContainer)
-            );
-        }
+        window.removeEventListener(
+            'scroll',
+            this.scrollLoad(document.documentElement)
+        );
     }
 }
 </script>
