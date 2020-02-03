@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full overflow-y-scroll scrolling-touch" ref="movie-list">
+    <div class="overflow-y-scroll scrolling-touch" ref="movie-list">
         <!-- <Header /> -->
         <div class="relative mt-16 pb-20 max-w-6xl mx-auto">
             <div class="w-full lg:flex lg:items-start pt-6">
