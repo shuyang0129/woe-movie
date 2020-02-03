@@ -12,19 +12,15 @@
                 :class="isMenuOpen ? 'block' : 'hidden'"
             >
                 <router-link
-                    to="/"
-                    class="block text-sm text-gray-600 hover:bg-indigo-100 rounded p-2 sm:inline-block md:ml-8 transition-all"
-                    >Home</router-link
-                >
-                <router-link
                     to="/movies"
                     class="block text-sm text-gray-600 hover:bg-indigo-100 rounded p-2 sm:inline-block md:ml-8 transition-all"
                     >Movie</router-link
                 >
-                <router-link
-                    to="/"
+                <a
+                    href="http://shuyang-resume.surge.sh/"
+                    target="_blank"
                     class="block text-sm text-gray-600 hover:bg-indigo-100 rounded p-2 sm:inline-block md:ml-8 transition-all"
-                    >About</router-link
+                    >About</a
                 >
             </nav>
         </div>
