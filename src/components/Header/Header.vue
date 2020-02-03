@@ -4,7 +4,9 @@
             class="mx-auto max-w-6xl sm:flex sm:items-center sm:justify-between"
         >
             <div class="h-16 pr-2 pl-6 flex items-center justify-between">
-                <img class="h-4" src="./img/logo.png" alt="logo" />
+                <router-link to="/">
+                    <img class="h-4" src="./img/logo.png" alt="logo" />
+                </router-link>
                 <HamburgerMenu class="sm:hidden" :isMenuOpen="isMenuOpen" />
             </div>
             <nav
