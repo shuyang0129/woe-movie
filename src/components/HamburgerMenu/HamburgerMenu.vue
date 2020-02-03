@@ -1,7 +1,7 @@
 <template>
     <div
         class="nav-drawer"
-        @click="toggleMenu"
+        @click.stop="toggleMenu"
         :class="{ 'is-open': isMenuOpen }"
     >
         <span class="nav-drawer__hamburger-line"></span>

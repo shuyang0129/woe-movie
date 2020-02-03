@@ -40,8 +40,21 @@ import HamburgerMenu from '../HamburgerMenu/HamburgerMenu.vue';
 })
 export default class Header extends Vue {
     isMenuOpen: boolean = false;
+
     @Provide() toggleMenu(): void {
         this.isMenuOpen = !this.isMenuOpen;
+    }
+
+    closeMenu() {
+        if (this.isMenuOpen) this.isMenuOpen = false;
+    }
+
+    created() {
+        document.body.addEventListener('click', this.closeMenu);
+    }
+
+    beforeDestroy() {
+        document.body.removeEventListener('click', this.closeMenu);
     }
 }
 </script>
