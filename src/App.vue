@@ -20,6 +20,7 @@ export default class App extends Vue {
 
     async created() {
         this.initGenres();
+        localStorage.removeItem('movieFilter');
     }
 }
 </script>

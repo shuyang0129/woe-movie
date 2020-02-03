@@ -29,7 +29,7 @@
                         :value="getLangCode(langName)"
                     >
                         {{ langName }} ({{
-                        getLangCode(langName).toUpperCase()
+                            getLangCode(langName).toUpperCase()
                         }})
                     </option>
                 </select>
@@ -64,12 +64,13 @@
                 <!-- Release Year -->
                 <span class="form-label">Release Year</span>
                 <label class="block">
-                    <select v-model="releaseYear" class="form-select block w-full">
+                    <select
+                        v-model="releaseYear"
+                        class="form-select block w-full"
+                    >
                         <option value selected>None</option>
                         <option v-for="i in 101" :key="i">
-                            {{
-                            currentYear - i + 1
-                            }}
+                            {{ currentYear - i + 1 }}
                         </option>
                     </select>
                 </label>
@@ -104,11 +105,15 @@
                 <button
                     @click="getFilteredMovies"
                     class="w-full btn btn-indigo-3d mt-6 rounded"
-                >Filter</button>
+                >
+                    Filter
+                </button>
                 <button
                     @click="resetMovies"
                     class="w-full btn btn-gray-3d mt-4 rounded"
-                >Reset Filter</button>
+                >
+                    Reset Filter
+                </button>
             </div>
         </div>
     </transition>
@@ -122,6 +127,7 @@ import { QueryKey } from '@/models/enum/enum';
 import * as Interface from '@/models/interface/interface';
 import CloseButton from '@/components/CloseButton/CloseButton.vue';
 import ISO6391 from 'iso-639-1';
+import { sortOpts } from '@/models/data/tmdb-data';
 
 @Component({
     components: {
@@ -136,20 +142,7 @@ export default class SideBar extends Vue {
     @Mutation('movieQuery/resetQuery') resetQuery!: any;
     @Action('movieQuery/setQuery') setQuery!: any;
 
-    readonly sortOpts: Interface.IMovieSortBy[] = [
-        {
-            name: 'Popularity (Overall)',
-            value: 'popularity.desc',
-        },
-        {
-            name: 'Rating',
-            value: 'vote_average.desc',
-        },
-        {
-            name: 'Release Date',
-            value: 'primary_release_date.desc',
-        },
-    ];
+    readonly sortOpts = sortOpts;
 
     keywords: string = '';
     ratingCount: string = '';
@@ -232,13 +225,43 @@ export default class SideBar extends Vue {
         this.$emit('updateMovie');
         this.$emit('scrollTop');
     }
+
+    setMovieFilter() {
+        if (localStorage.movieFilter) {
+            const movieFilter = JSON.parse(
+                localStorage.getItem('movieFilter') || '{}'
+            );
+
+            this.keywords = movieFilter.keywords;
+            this.selectedGenreIds = movieFilter.selectedGenreIds;
+            this.originalLanguage = movieFilter.originalLanguage;
+            this.sortBy = movieFilter.sortBy;
+            this.ratingCount = movieFilter.ratingCount;
+            this.releaseYear = movieFilter.releaseYear;
+            this.isInludeVideo = movieFilter.isInludeVideo;
+        }
+    }
+
+    storeMovieFilter() {
+        const movieFilter = {
+            keywords: this.keywords,
+            selectedGenreIds: this.selectedGenreIds,
+            originalLanguage: this.originalLanguage,
+            sortBy: this.sortBy,
+            ratingCount: this.ratingCount,
+            releaseYear: this.releaseYear,
+            isInludeVideo: this.isInludeVideo,
+        };
+
+        localStorage.setItem('movieFilter', JSON.stringify(movieFilter));
+    }
+
+    mounted() {
+        this.setMovieFilter();
+    }
+
+    beforeDestroy() {
+        this.storeMovieFilter();
+    }
 }
 </script>
-<style lang="scss" scoped>
-.fadeIn-enter-active {
-    animation: 0.3s fadeIn ease-in-out;
-}
-.fadeIn-leave-active {
-    animation: 0.3s fadeIn ease-in-out reverse;
-}
-</style>

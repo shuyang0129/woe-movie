@@ -1,44 +1,53 @@
 <template>
-    <keep-alive>
-        <div class="h-full overflow-y-scroll scrolling-touch" ref="movie-list">
-            <!-- <Header /> -->
-            <div class="relative mt-16 pb-20 max-w-6xl mx-auto">
-                <div class="w-full lg:flex lg:items-start pt-6">
-                    <div class="w-full h-full lg:w-4/6 md:px-12 lg:px-6">
-                        <ScrollTopButton :isScrollTopShow="isScrollTopShow" @scrollTop="scrollTop" />
-                        <div class="flex items-baseline justify-between px-6 lg:px-0">
-                            <p class="text-sm text-gray-600 py-2">
-                                Total Results:
-                                {{ isLoading ? '' : totalResults }}
-                            </p>
-                            <SidebarButton />
-                        </div>
-                        <p
-                            v-if="totalResults === 0 && !isLoading"
-                            class="text-base p-6 italic"
-                        >No results</p>
-                        <div v-else class="relative">
-                            <MovieCard v-for="movie in movies" :key="movie.id" :movie="movie" />
-                        </div>
-                        <p
-                            v-if="currentPage === totalPages"
-                            class="text-xs italic text-gray-500 text-center my-4"
-                        >The End Of The Results</p>
+    <div class="h-full overflow-y-scroll scrolling-touch" ref="movie-list">
+        <!-- <Header /> -->
+        <div class="relative mt-16 pb-20 max-w-6xl mx-auto">
+            <div class="w-full lg:flex lg:items-start pt-6">
+                <div class="w-full h-full lg:w-4/6 md:px-12 lg:px-6">
+                    <ScrollTopButton
+                        :isScrollTopShow="isScrollTopShow"
+                        @scrollTop="scrollTop"
+                    />
+                    <div
+                        class="flex items-baseline justify-between px-6 lg:px-0"
+                    >
+                        <p class="text-sm text-gray-600 py-2">
+                            Total Results:
+                            {{ isLoading ? '' : totalResults }}
+                        </p>
+                        <SidebarButton />
                     </div>
-                    <div class="lg:block lg:w-2/6 lg:px-6">
-                        <keep-alive>
-                            <Sidebar
-                                :isSidebarOpen="isSidebarOpen"
-                                :genres="genres"
-                                @updateMovie="getAndUpdateMovies"
-                                @scrollTop="scrollTop"
-                            />
-                        </keep-alive>
+                    <p
+                        v-if="totalResults === 0 && !isLoading"
+                        class="text-base p-6 italic"
+                    >
+                        No results
+                    </p>
+                    <div v-else class="relative">
+                        <MovieCard
+                            v-for="movie in movies"
+                            :key="movie.id"
+                            :movie="movie"
+                        />
                     </div>
+                    <p
+                        v-if="currentPage === totalPages"
+                        class="text-xs italic text-gray-500 text-center my-4"
+                    >
+                        The End Of The Results
+                    </p>
+                </div>
+                <div class="lg:block lg:w-2/6 lg:px-6">
+                    <Sidebar
+                        :isSidebarOpen="isSidebarOpen"
+                        :genres="genres"
+                        @updateMovie="getAndUpdateMovies"
+                        @scrollTop="scrollTop"
+                    />
                 </div>
             </div>
         </div>
-    </keep-alive>
+    </div>
 </template>
 
 <script lang="ts">
