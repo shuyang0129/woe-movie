@@ -22,14 +22,14 @@
                 <!-- Original Language -->
                 <span class="form-label">Original Language</span>
                 <select v-model="originalLanguage" class="form-select w-full">
-                    <option value="" selected>None</option>
+                    <option value selected>None</option>
                     <option
                         v-for="langName in langNames"
                         :key="langName"
                         :value="getLangCode(langName)"
                     >
                         {{ langName }} ({{
-                            getLangCode(langName).toUpperCase()
+                        getLangCode(langName).toUpperCase()
                         }})
                     </option>
                 </select>
@@ -64,14 +64,13 @@
                 <!-- Release Year -->
                 <span class="form-label">Release Year</span>
                 <label class="block">
-                    <select
-                        v-model="releaseYear"
-                        class="form-select block w-full"
-                    >
-                        <option value="" selected>None</option>
-                        <option v-for="i in 101" :key="i">{{
+                    <select v-model="releaseYear" class="form-select block w-full">
+                        <option value selected>None</option>
+                        <option v-for="i in 101" :key="i">
+                            {{
                             currentYear - i + 1
-                        }}</option>
+                            }}
+                        </option>
                     </select>
                 </label>
                 <!-- Genre -->
@@ -105,15 +104,11 @@
                 <button
                     @click="getFilteredMovies"
                     class="w-full btn btn-indigo-3d mt-6 rounded"
-                >
-                    Filter
-                </button>
+                >Filter</button>
                 <button
                     @click="resetMovies"
                     class="w-full btn btn-gray-3d mt-4 rounded"
-                >
-                    Reset Filter
-                </button>
+                >Reset Filter</button>
             </div>
         </div>
     </transition>
@@ -203,6 +198,7 @@ export default class SideBar extends Vue {
 
         query[QueryKey.WITH_ORIDINAL_LANGUAGE] = this.originalLanguage;
         query[QueryKey.SORT_BY] = this.sortBy;
+        query[QueryKey.RATING_COUNT] = this.ratingCount;
         query[QueryKey.PRIMARY_RELEASE_YEAR] = this.releaseYear;
         query[QueryKey.WITH_GENRES] = this.selectedGenreIds.join(',');
         query[QueryKey.PAGE] = 1;
@@ -226,6 +222,7 @@ export default class SideBar extends Vue {
         this.selectedGenreIds = [];
         this.originalLanguage = '';
         this.sortBy = this.sortOpts[0].value;
+        this.ratingCount = '';
         this.releaseYear = '';
         this.isInludeVideo = false;
 

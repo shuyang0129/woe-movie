@@ -5,13 +5,8 @@
             <div class="relative mt-16 pb-20 max-w-6xl mx-auto">
                 <div class="w-full lg:flex lg:items-start pt-6">
                     <div class="w-full h-full lg:w-4/6 md:px-12 lg:px-6">
-                        <ScrollTopButton
-                            :isScrollTopShow="isScrollTopShow"
-                            @scrollTop="scrollTop"
-                        />
-                        <div
-                            class="flex items-baseline justify-between px-6 lg:px-0"
-                        >
+                        <ScrollTopButton :isScrollTopShow="isScrollTopShow" @scrollTop="scrollTop" />
+                        <div class="flex items-baseline justify-between px-6 lg:px-0">
                             <p class="text-sm text-gray-600 py-2">
                                 Total Results:
                                 {{ isLoading ? '' : totalResults }}
@@ -21,30 +16,24 @@
                         <p
                             v-if="totalResults === 0 && !isLoading"
                             class="text-base p-6 italic"
-                        >
-                            No results
-                        </p>
+                        >No results</p>
                         <div v-else class="relative">
-                            <MovieCard
-                                v-for="movie in movies"
-                                :key="movie.id"
-                                :movie="movie"
-                            />
+                            <MovieCard v-for="movie in movies" :key="movie.id" :movie="movie" />
                         </div>
                         <p
                             v-if="currentPage === totalPages"
                             class="text-xs italic text-gray-500 text-center my-4"
-                        >
-                            The End Of The Results
-                        </p>
+                        >The End Of The Results</p>
                     </div>
                     <div class="lg:block lg:w-2/6 lg:px-6">
-                        <Sidebar
-                            :isSidebarOpen="isSidebarOpen"
-                            :genres="genres"
-                            @updateMovie="getAndUpdateMovies"
-                            @scrollTop="scrollTop"
-                        />
+                        <keep-alive>
+                            <Sidebar
+                                :isSidebarOpen="isSidebarOpen"
+                                :genres="genres"
+                                @updateMovie="getAndUpdateMovies"
+                                @scrollTop="scrollTop"
+                            />
+                        </keep-alive>
                     </div>
                 </div>
             </div>
@@ -101,6 +90,7 @@ export default class Movies extends Vue {
         const query = this.getQuery;
         // GET request for TMDB movies
         const data: Interface.IMoviesResponse = await tmdbApi.getMovies(query);
+        data.results = data.results.filter(movie => movie.poster_path);
         // UPDATE data
         this.movies =
             query.page > 1 && query.page > this.currentPage
