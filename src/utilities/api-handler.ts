@@ -31,8 +31,13 @@ tmdb.interceptors.response.use(
     (error: AxiosError) => {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
-        const errMsg: string | undefined = (error.response as AxiosResponse)
-            .data.status_message;
+        const {
+            status_message,
+            status_code,
+        } = (error.response as AxiosResponse).data;
+
+        if (status_code === 34) window.location.replace('/404');
+
         return Promise.reject(error);
     }
 );
