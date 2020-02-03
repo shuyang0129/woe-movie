@@ -62,6 +62,9 @@ module.exports = {
             opacity: {
                 '90': '0.90',
             },
+            fontSize: {
+                xxl: '10rem',
+            },
         },
     },
     variants: {},

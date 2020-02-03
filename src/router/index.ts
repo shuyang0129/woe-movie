@@ -19,6 +19,11 @@ const routes = [
         name: 'movieDetail',
         component: () => import('@/views/MovieDetail.vue'),
     },
+    {
+        path: '/*',
+        name: '404',
+        component: () => import('@/views/404.vue'),
+    },
 ];
 
 const router = new VueRouter({
