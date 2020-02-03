@@ -13,10 +13,10 @@
                 </div>
                 <img
                     class="w-full object-contain mx-auto rounded-sm shadow-2xl"
-                    :src="selectedImage.file_path | tmdbImagePath('w1280')"
+                    :src="localSelectedImage.file_path | tmdbImagePath('w1280')"
                 />
                 <div
-                    class=" h-20 sm:h-32 flex items-center overflow-x-scroll overflow-y-auto py-4 px-1 sm:mt-16 sm:pb-8 customize-scroll_dark"
+                    class="h-20 sm:h-32 flex items-center overflow-x-scroll overflow-y-auto py-4 px-1 sm:mt-16 sm:pb-8 customize-scroll_dark"
                 >
                     <img
                         v-for="movieImage in movieImages"
@@ -26,7 +26,7 @@
                         :class="{
                             'shadow-outline':
                                 movieImage.file_path ===
-                                selectedImage.file_path,
+                                localSelectedImage.file_path,
                         }"
                         :src="movieImage.file_path | tmdbImagePath('w300')"
                     />
@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Provide, Prop } from 'vue-property-decorator';
+import { Component, Vue, Provide, Prop, Watch } from 'vue-property-decorator';
 import * as Interface from '@/models/interface/interface';
 import { Getter, Action } from 'vuex-class';
 import { tmdbImagePath } from '@/utilities/display-filter';
@@ -55,15 +55,21 @@ export default class Lightbox extends Vue {
     @Prop() movieImages!: Interface.IMovieImage[];
     @Prop() selectedImage!: Interface.IMovieImage;
     @Prop({ default: false }) isLightboxOpen!: boolean;
+    localSelectedImage: Interface.IMovieImage = this.movieImages[0];
     isLoading: boolean = false;
 
     reloadImage(img: Interface.IMovieImage) {
         this.isLoading = true;
-        this.selectedImage = img;
+        this.localSelectedImage = img;
     }
 
     closeLightbox(): void {
         this.$emit('closeLightbox');
+    }
+
+    @Watch('selectedImage')
+    reloadlocalSelectedImage() {
+        if (this.selectedImage) this.localSelectedImage = this.selectedImage;
     }
 }
 </script>
