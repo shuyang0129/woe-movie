@@ -53,12 +53,12 @@
                 </div>
                 <!-- Rating Count | Greater & Equal -->
                 <label class="block">
-                    <span class="form-label">Filter with Rating Count</span>
+                    <span class="form-label">Filter with Rating Count (≥)</span>
                     <input
-                        v-model.number="ratingCount"
-                        @input="checkNumberOnly"
+                        v-model="ratingCount"
+                        type="text"
                         class="form-input w-full"
-                        placeholder="Greater and equal"
+                        placeholder="Only number"
                     />
                 </label>
                 <!-- Release Year -->
@@ -172,8 +172,9 @@ export default class SideBar extends Vue {
         return ISO6391.getAllNames().sort(); // [English, Japanese, ...]
     }
 
-    checkNumberOnly(e: any) {
-        this.ratingCount = e.target.value.replace(/[^0-9]+/g, '');
+    @Watch('ratingCount')
+    filterNumOnly() {
+        this.ratingCount = this.ratingCount.replace(/[^\d]/g, '');
     }
 
     getLangCode(langName: string): string {
