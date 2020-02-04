@@ -1,6 +1,6 @@
 <template>
     <div class="scrolling-touch" ref="movie-detail">
-        <div v-if="!isLoading" class="overflow-x-hidden w-full mt-16 pb-6">
+        <div v-if="!isLoading" class="w-full mt-16 pb-6">
             <!-- Scroll Top Button -->
             <ScrollTopButton />
             <!-- Lightbox -->
@@ -10,90 +10,101 @@
                 :selectedImage="selectedImage"
                 @closeLightbox="closeLightbox"
             />
-            <div class="fixed w-full h-56 z-20 sm:hidden">
-                <div class="bg-gray-900 opacity-25 absolute inset-0"></div>
-                <img
-                    v-if="movieDetail.backdrop_path"
-                    class="object-cover h-full w-full"
-                    :src="movieDetail.backdrop_path | tmdbImagePath('w1280')"
-                />
-            </div>
-            <!-- Banner -->
-            <div class="relative px-4 sm:px-0 mt-48 sm:mt-0 z-30 bg-gray-300">
-                <MovieDetailBanner :movieDetail="movieDetail" />
-            </div>
-            <div class="relative px-4 z-30 bg-gray-200 max-w-3xl mx-auto">
-                <!-- People -->
-                <SectionTitle
-                    :title="'Actors/Actress'"
-                    :isShowBtn="displayMovieCasts.length < movieCasts.length"
-                    :btnName="'Show All'"
-                    @handleClick="expandCast"
-                />
-                <div class="flex flex-wrap sm:-m-2">
-                    <div
-                        v-for="(movieCast, i) in displayMovieCasts"
-                        :key="i"
-                        class="w-full sm:w-1/2 py-2 sm:p-2"
-                    >
-                        <MovieDetailPeople :movieCast="movieCast" />
-                    </div>
-                </div>
-                <!-- Images -->
-                <SectionTitle
-                    v-if="movieImages.length > 0"
-                    :title="'Images'"
-                    :isShowBtn="true"
-                    :btnName="'Show All'"
-                    @handleClick="openLightbox()"
-                />
-                <MovieDetailImageGrid
-                    v-if="movieImages.length > 0"
-                    :movieImages="movieImages"
-                    @handleClick="openLightbox"
-                />
-                <!-- Trailer Video -->
-                <SectionTitle
-                    v-if="movieVidoes.length > 0"
-                    :title="'Trailer'"
-                    :isShowBtn="false"
-                />
-                <div
-                    v-if="!isLoading && movieVidoes.length > 0"
-                    class="w-full relative"
-                    style="padding-top: 56.25%"
-                >
-                    <iframe
-                        class="absolute inset-0 w-full h-full"
+            <div class="overflow-x-hidden">
+                <div class="fixed w-full h-56 z-20 sm:hidden">
+                    <div class="bg-gray-900 opacity-25 absolute inset-0"></div>
+                    <img
+                        v-if="movieDetail.backdrop_path"
+                        class="object-cover h-full w-full"
                         :src="
-                            `https://www.youtube.com/embed/${movieVidoes[0].key}`
+                            movieDetail.backdrop_path | tmdbImagePath('w1280')
                         "
-                        frameborder="0"
-                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen
-                    ></iframe>
-                </div>
-                <!-- Similar Movies -->
-                <SectionTitle :title="'Similar Movies'" :isShowBtn="false" />
-                <MovieCardSimpleList :movies="similarMovies" />
-                <!-- Reviews -->
-                <div v-if="movieReviews.length > 0" class="section-title">
-                    <span class="text-gray-700">Reviews</span>
-                </div>
-                <div v-if="movieReviews.length > 0" class="py-2">
-                    <MovieDetailReview
-                        v-for="movieReview in movieReviews"
-                        :movieReview="movieReview"
-                        :key="movieReview.id"
-                        :refName="movieReview.id"
                     />
                 </div>
-                <p
-                    v-if="currentReviewPage === totalReviewPage"
-                    class="text-xs italic text-gray-500 text-center mt-8 mb-4"
+                <!-- Banner -->
+                <div
+                    class="relative px-4 sm:px-0 mt-48 sm:mt-0 z-30 bg-gray-300"
                 >
-                    The End Of The Page
-                </p>
+                    <MovieDetailBanner :movieDetail="movieDetail" />
+                </div>
+                <div class="relative px-4 z-30 bg-gray-200 max-w-3xl mx-auto">
+                    <!-- People -->
+                    <SectionTitle
+                        :title="'Actors/Actress'"
+                        :isShowBtn="
+                            displayMovieCasts.length < movieCasts.length
+                        "
+                        :btnName="'Show All'"
+                        @handleClick="expandCast"
+                    />
+                    <div class="flex flex-wrap sm:-m-2">
+                        <div
+                            v-for="(movieCast, i) in displayMovieCasts"
+                            :key="i"
+                            class="w-full sm:w-1/2 py-2 sm:p-2"
+                        >
+                            <MovieDetailPeople :movieCast="movieCast" />
+                        </div>
+                    </div>
+                    <!-- Images -->
+                    <SectionTitle
+                        v-if="movieImages.length > 0"
+                        :title="'Images'"
+                        :isShowBtn="true"
+                        :btnName="'Show All'"
+                        @handleClick="openLightbox()"
+                    />
+                    <MovieDetailImageGrid
+                        v-if="movieImages.length > 0"
+                        :movieImages="movieImages"
+                        @handleClick="openLightbox"
+                    />
+                    <!-- Trailer Video -->
+                    <SectionTitle
+                        v-if="movieVidoes.length > 0"
+                        :title="'Trailer'"
+                        :isShowBtn="false"
+                    />
+                    <div
+                        v-if="!isLoading && movieVidoes.length > 0"
+                        class="w-full relative"
+                        style="padding-top: 56.25%"
+                    >
+                        <iframe
+                            class="absolute inset-0 w-full h-full"
+                            :src="
+                                `https://www.youtube.com/embed/${movieVidoes[0].key}`
+                            "
+                            frameborder="0"
+                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                        ></iframe>
+                    </div>
+                    <!-- Similar Movies -->
+                    <SectionTitle
+                        :title="'Similar Movies'"
+                        :isShowBtn="false"
+                    />
+                    <MovieCardSimpleList :movies="similarMovies" />
+                    <!-- Reviews -->
+                    <div v-if="movieReviews.length > 0" class="section-title">
+                        <span class="text-gray-700">Reviews</span>
+                    </div>
+                    <div v-if="movieReviews.length > 0" class="py-2">
+                        <MovieDetailReview
+                            v-for="movieReview in movieReviews"
+                            :movieReview="movieReview"
+                            :key="movieReview.id"
+                            :refName="movieReview.id"
+                        />
+                    </div>
+                    <p
+                        v-if="currentReviewPage === totalReviewPage"
+                        class="text-xs italic text-gray-500 text-center mt-8 mb-4"
+                    >
+                        The End Of The Page
+                    </p>
+                </div>
             </div>
         </div>
     </div>
