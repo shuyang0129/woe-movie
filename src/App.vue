@@ -1,7 +1,9 @@
 <template>
     <div id="app" class="antialiased text-gray-600">
-        <Header />
-        <router-view></router-view>
+        <div class="overflow-x-hidden">
+            <Header />
+            <router-view></router-view>
+        </div>
     </div>
 </template>
 
