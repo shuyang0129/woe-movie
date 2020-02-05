@@ -125,22 +125,22 @@ export default class Movies extends Vue {
         window.innerWidth >= 1024 ? this.openSidebar() : this.closeSidebar();
     }
 
-    scrollLoad(): void {
-        window.addEventListener('scroll', () => {
-            const movieContainer = document.documentElement as HTMLElement;
-            const query = this.getQuery;
-            // REACH BOTTOM: scrollTop + clientHeight = scrollHeight
-            const bottomOfWindow =
-                movieContainer.scrollTop + movieContainer.clientHeight >=
-                movieContainer.scrollHeight;
+    async scrollLoad() {
+        const movieContainer = document.documentElement as HTMLElement;
+        const query = this.getQuery;
+        // REACH BOTTOM: scrollTop + clientHeight = scrollHeight
+        const bottomOfWindow =
+            movieContainer.scrollTop + movieContainer.clientHeight >=
+            movieContainer.scrollHeight;
 
-            if (bottomOfWindow && query.page < this.totalPages) {
-                // Scroll loading
-                query.page++;
-                this.setQuery(query);
-                this.getAndUpdateMovies();
-            }
-        });
+        if (bottomOfWindow && query.page < this.totalPages && !this.isLoading) {
+            // Scroll loading
+            this.isLoading = true;
+            query.page++;
+
+            await this.setQuery(query);
+            this.getAndUpdateMovies();
+        }
     }
 
     scrollTop() {
@@ -154,12 +154,9 @@ export default class Movies extends Vue {
         this.onResize(); // Check when reloading the page
         window.addEventListener('resize', this.onResize); // Check when resizing the page
 
-        // If on window top, load first page with query options
-        if (window.scrollY === 0) {
-            const query = this.getQuery;
-            query.page = 1;
-            this.setQuery(query);
-        }
+        const query = this.getQuery;
+        query.page = 1;
+        await this.setQuery(query);
 
         // GET and UPDATE movies
         this.getAndUpdateMovies();
@@ -169,7 +166,7 @@ export default class Movies extends Vue {
         this.genres = genres;
 
         // Scroll loading movies
-        this.scrollLoad();
+        window.addEventListener('scroll', this.scrollLoad);
     }
 
     beforeDestroy() {
