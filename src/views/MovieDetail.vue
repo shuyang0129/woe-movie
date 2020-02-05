@@ -176,28 +176,26 @@ export default class MovieDetail extends Vue {
         this.isLightboxOpen = false;
     }
 
-    scrollLoad(dom: HTMLElement) {
-        return async () => {
-            const bottom = dom.scrollTop + dom.clientHeight >= dom.scrollHeight;
+    async scrollLoad() {
+        const dom: HTMLElement = document.documentElement;
+        const bottom = dom.scrollTop + dom.clientHeight >= dom.scrollHeight;
 
-            if (bottom && this.currentReviewPage < this.totalReviewPage) {
-                // Load more reviews
-                this.currentReviewPage++;
+        if (bottom && this.currentReviewPage < this.totalReviewPage) {
+            // Load more reviews
+            this.currentReviewPage++;
 
-                // Request results of more review
-                const { results } = await tmdbApi.getMovieReviews(
-                    this.movieId,
-                    {
-                        page: this.currentReviewPage,
-                    }
-                );
+            // Request results of more review
+            const { results } = await tmdbApi.getMovieReviews(this.movieId, {
+                page: this.currentReviewPage,
+            });
 
-                this.movieReviews = this.movieReviews.concat(results);
-            }
-        };
+            this.movieReviews = this.movieReviews.concat(results);
+        }
     }
 
     async getDataAndUpdate() {
+        this.isLoading = true;
+
         const [
             getMovieDetail, // 1) Movie detail
             getMovieImages, // 2) Movie image
@@ -227,6 +225,8 @@ export default class MovieDetail extends Vue {
             (video: Interface.IMovieVideo) =>
                 video.site === 'YouTube' && video.type === 'Trailer'
         );
+
+        this.isLoading = false;
     }
 
     async created() {
@@ -234,23 +234,13 @@ export default class MovieDetail extends Vue {
         this.movieId = this.$route.params.movieId;
 
         // GET movie data
-        this.isLoading = true;
+        this.getDataAndUpdate();
 
-        await this.getDataAndUpdate();
-
-        this.isLoading = false;
-
-        window.addEventListener(
-            'scroll',
-            this.scrollLoad(document.documentElement)
-        );
+        window.addEventListener('scroll', this.scrollLoad);
     }
 
     beforeDestroy() {
-        window.removeEventListener(
-            'scroll',
-            this.scrollLoad(document.documentElement)
-        );
+        window.removeEventListener('scroll', this.scrollLoad);
     }
 }
 </script>
