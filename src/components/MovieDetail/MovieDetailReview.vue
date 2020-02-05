@@ -7,12 +7,12 @@
                 alt
             />
             <div class="ml-2">
-                <h4 class="text-sm font-semibold text-gray-700 -mb-2">
+                <h4 class="text-sm font-semibold text-gray-700">
                     {{ movieReview.author }}
                 </h4>
-                <span class="inline-block text-xs text-gray-500 italic"
+                <!-- <span class="inline-block text-xs text-gray-500 italic -mt-2"
                     >October 4, 2019</span
-                >
+                > -->
             </div>
         </div>
         <p class="text-sm text-gray-600 whitespace-pre-wrap" :ref="refName">
