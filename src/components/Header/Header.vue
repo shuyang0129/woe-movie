@@ -22,7 +22,13 @@
                     href="http://shuyang-resume.surge.sh/"
                     target="_blank"
                     class="block text-sm text-gray-600 hover:bg-indigo-100 rounded p-2 sm:inline-block md:ml-8 transition-all"
-                    >About</a
+                    >About Me</a
+                >
+                <a
+                    href="https://github.com/shuyang0129/woe-movie"
+                    target="_blank"
+                    class="block text-sm text-gray-600 hover:bg-indigo-100 rounded p-2 sm:inline-block md:ml-8 transition-all"
+                    >Github</a
                 >
             </nav>
         </div>
